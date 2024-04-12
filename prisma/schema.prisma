@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  firstName String
+  lastName  String
+  password  Bytes
+  salt      Bytes
+  createdAt DateTime @default(now())
+  active    Boolean  @default(false)
+  admin     Boolean  @default(false)
+
+  verificationCode Verification?
+}
+
+model Verification {
+  user   User     @relation(fields: [userId], references: [id])
+  userId Int      @id
+  code   String   @unique
+  sendAt DateTime @updatedAt
+}
+
+model Term {
+  id         Int    @id @default(autoincrement())
+  name       String @unique
+  definition String
+}
+
+model Section {
+  id                Int          @id @default(autoincrement())
+  name              String       @unique
+  number            Int
+  imageURL          String
+  enableSubsections Boolean
+  subsections       Subsection[]
+  Reference         Reference[]
+}
+
+model Subsection {
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  number    Int
+  imageURL  String
+  section   Section     @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  sectionId Int
+  slides    Slide[]
+  Reference Reference[]
+}
+
+model Slide {
+  id           Int         @id @default(autoincrement())
+  number       Int
+  title        String
+  subsection   Subsection  @relation(fields: [subsectionId], references: [id], onDelete: Cascade)
+  subsectionId Int
+  components   Component[]
+}
+
+// holds component types
+// component types need to be populated
+// into the component js route, added
+// to the component model, and
+// have its model created
+model ComponentType {
+  id         Int         @id
+  name       String      @unique
+  variable   String      @unique
+  components Component[]
+}
+
+model Component {
+  id      Int           @id @default(autoincrement())
+  slide   Slide         @relation(fields: [slideId], references: [id], onDelete: Cascade)
+  slideId Int
+  type    ComponentType @relation(fields: [typeId], references: [id])
+  typeId  Int
+  number  Int
+  width   Int
+  height  Int?
+
+  // need to list component types here
+  // for ORM, not created in DB
+  spacer                 Spacer?
+  textbox                TextBox?
+  image                  Image?
+  video                  Video?
+  openEndedQuestion      OpenEndedQuestion?
+  reference              Reference?
+  dragAndDrop            DragAndDrop?
+  multipleChoiceQuestion MultipleChoiceQuestion?
+}
+
+model Spacer {
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId Int       @id
+}
+
+model TextBox {
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId Int       @id
+  data        Json
+}
+
+model Image {
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId Int       @id
+  URL         String
+}
+
+model Video {
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId Int       @id
+  URL         String
+}
+
+model OpenEndedQuestion {
+  component      Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId    Int       @id
+  prompt         Json
+  responseHeight Int
+}
+
+model Reference {
+  component    Component   @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId  Int         @id
+  section      Section     @relation(fields: [sectionId], references: [id])
+  sectionId    Int
+  subsection   Subsection? @relation(fields: [subsectionId], references: [id])
+  subsectionId Int?
+  message      Json
+}
+
+model DragAndDrop {
+  component    Component   @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId  Int         @id
+  header       Json?
+  questions    Json[]
+  answers      Json[]
+}
+
+model MultipleChoiceQuestion {
+  component    Component   @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  componentId  Int         @id
+  question     Json
+  options      Json[]
+  correctIndex Int
+}

@@ -1,0 +1,54 @@
+<% const uuid = Math.ceil(Math.random() * 2 ** 32)%>
+
+<div class="pt-4">
+    <input type="text" name="data" id="textcontainer-<%= uuid %>" style="display: none;">
+    <div id="editor-<%= uuid %>" style="min-height: 30vh;">
+        <% if (locals.component){ %>
+            <%-component.textbox.text %>
+        <% } %>
+    </div>
+</div>
+
+
+<script type="module">
+    ;(() => {
+        let quill = new Quill('#editor-<%= uuid %>', {
+            modules: {
+                toolbar: [
+                    [
+                        { 'font': [] },
+                        { 'size': [] }
+                    ],
+                    [
+                        { 'color': [] }, { 'background': [] },
+                        'bold', 'italic', 'underline', 'strike',
+                    ],
+                    [
+                        { 'align': [] },
+                        { 'indent': '-1'}, 
+                        { 'indent': '+1' }
+                    ],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }, 'formula']
+                ]
+            },
+            placeholder: 'Compose an epic...',
+            theme: 'snow' 
+        });
+
+        // comments are just to hide linting errors
+        // do NOT delete
+        //<% if (locals.component){ %>
+            let delta = JSON.parse(String.raw`<%- component.textbox.data %>`);
+            quill.setContents(delta);
+        //<% } %>
+
+        const container = document.getElementById("textcontainer-<%= uuid %>");
+        container.value = JSON.stringify(quill.getContents());
+        quill.on('text-change', (delta, oldDelta, source) => {
+            container.value = JSON.stringify(quill.getContents());
+        });
+    })();
+    
+
+</script>

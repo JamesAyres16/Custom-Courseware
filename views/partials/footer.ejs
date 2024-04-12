@@ -1,0 +1,59 @@
+<div id="live-alert-placeholder" class="fixed-bottom mx-4" style="z-index: 9999;"></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.3/dragula.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.js"></script>
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<script>
+    async function alert(msg, type) {
+        alert_container = document.getElementById('live-alert-placeholder');
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = [
+            `<div class="alert alert-${type} alert-dismissible" role="alert" style="z-index: 3;">`,
+            `   <div>${msg}</div>`,
+            '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+            '</div>'
+        ].join('');
+        alert_container.appendChild(wrapper);
+        if (type == 'success') {
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            wrapper.remove()
+        }
+    }
+</script>
+<% if (locals.msg && msg.text && msg.type) { %>
+    <script>alert('<%= msg.text %>', '<%= msg.type %>')</script>
+<% } %>
+
+<% if (locals.admin) { %>
+    <div class="btn btn-primary position-fixed bottom-0 end-0 m-4"
+         style="z-index: 10;"
+    >
+        <% let ltype = (locals.admin_view)? 'unlock' : 'lock' %>
+        <i class="bi bi-<%= ltype %>-fill" id="admin-toggle"></i>
+    </div>
+    <script>
+        document.getElementById('admin-toggle').addEventListener('click', (e) => {
+            fetch('/admin/toggle').then(async res => {
+                if (!res.ok) {
+                    const hasMsg = (
+                        res.headers.get('content-type')?.includes('text/plain')
+                    );
+                    const msg = hasMsg ? await res.text() : 'Non-Ok Response';
+                    throw new Error(msg)
+                }
+                else {
+                    location.reload()
+                    // let tmp = await res.text()
+                    // console.log(tmp)
+                }
+            }).catch(
+                err => alert(err, 'danger')
+            )
+        })
+    </script>
+    <%- include('../partials/verify_delete') %>
+<% } %>
+</div>
+<%- include("glossary/glossary") %>
+</body>
+</html>

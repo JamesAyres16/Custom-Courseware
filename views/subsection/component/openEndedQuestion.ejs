@@ -1,0 +1,24 @@
+<% const uuid = Math.ceil(Math.random() * 2 ** 32)%>
+
+<div>
+    <div id="open-ended-prompt<%= uuid %>" class="w-100"></div>
+    <script type="module">
+        new Quill("#open-ended-prompt<%= uuid %>", {
+            modules: {},
+            readOnly: true
+        }).setContents(
+            JSON.parse(String.raw`<%- component.openEndedQuestion.prompt %>`)
+        );
+    </script>
+
+    <div class="form-floating px-1">
+        <%# ignore style linter. It's confused. %>
+        <textarea 
+        class="form-control" 
+        id="prompt<%= uuid %>-ans" 
+        style="resize: none; height: <%= component.openEndedQuestion?.responseHeight || 75 %>px;"
+        ></textarea>
+        <label for="prompt<%= uuid %>-ans">Type here...</label>
+    </div>
+</div>
+    

@@ -1,0 +1,115 @@
+<% 
+    const uuid = Math.ceil(Math.random() * 2 ** 32)
+    let q_mapping = component.dragAndDrop.questions.map((question, index) => {
+        return {
+            id: index,
+            question: question,
+        }
+    });
+    q_mapping.sort(() => Math.random() - 0.5)
+
+    let a_mapping = component.dragAndDrop.answers.map((answer, index) => {
+        return {
+            id: index,
+            answer: answer
+        }
+    });
+    a_mapping.sort(() => Math.random() - 0.5)
+%>
+
+<div class="row " id="drag-and-drop-heading-<%= uuid %>" style="height: auto;"></div>
+
+<div class ="row" id="drag-and-drop-<%= uuid %>" data-uuid="<%= uuid %>">
+    <div class="col">
+        <div 
+            class="bg-secondary bg-opacity-25 d-flex flex-column justify-content-around h-100 p-3"
+            id="drag-and-drop-answers-<%= uuid %>"
+        >
+            <% for (let answer of a_mapping) { %>
+                <div 
+                    class="quil-display bg-primary text-white rounded-3 answer" 
+                    data-qa-mapping="<%= answer.id %>" 
+                    style="height: auto;"
+                ></div>
+            <% } %>
+        </div>
+    </div>
+    <div class="col question" id="drag-and-drop-questions-<%= uuid %>">
+        <% for (let question of q_mapping) { %>
+            <div class="quil-display" data-qa-mapping="<%= question.id %>" style="height: auto;"></div>
+            <div 
+                class="answer-box <%= uuid %> bg-secondary bg-opacity-25 p-3" 
+                data-qa-mapping="<%= question.id %>"
+                style="height: 100px;"
+            ></div>
+        <% } %>
+    </div>
+</div>
+
+<button 
+    type="button" 
+    class="btn btn-primary my-2 float-end" 
+    id="check-drag-and-drop-<%= uuid %>"
+>Check</button>
+
+<script>
+    (async () => {
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        while (typeof Quill == 'undefined') {
+            await sleep(500);
+        }
+        // <% if (component.dragAndDrop.header && component.dragAndDrop.header.length > 0) { %>
+            new Quill(
+                document.getElementById("drag-and-drop-heading-<%= uuid %>")
+            ).setContents(JSON.parse(String.raw`<%- component.dragAndDrop.header %>`));
+        // <% } %>
+
+        let q_mapping = JSON.parse(String.raw`<%- JSON.stringify(q_mapping) %>`);
+        let a_mapping = JSON.parse(String.raw`<%- JSON.stringify(a_mapping) %>`);
+
+        let options = {
+            modules: {},
+            readOnly: true
+        };
+        let question_list = document.getElementById("drag-and-drop-questions-<%= uuid %>")
+        for (let question of question_list.getElementsByClassName('quil-display')) {
+            new Quill(question, options).setContents(JSON.parse(
+                q_mapping.find(q => q.id == question.dataset.qaMapping).question
+            ))
+        }
+
+        let answer_list = document.getElementById("drag-and-drop-answers-<%= uuid %>")
+        for (let answer of answer_list.getElementsByClassName('quil-display')) {
+            new Quill(answer, options).setContents(JSON.parse(
+                a_mapping.find(a => a.id == answer.dataset.qaMapping).answer
+            ))
+        }
+
+        let drag_list = [ answer_list ]
+        for (let answer_box of question_list.getElementsByClassName('answer-box')) {
+            drag_list.push(answer_box)
+        }
+        dragula(drag_list, {
+            accepts: (el, target, source, sibling) => {
+                if (
+                    target.classList.contains('answer-box') && 
+                    target.querySelector('.answer:not(.gu-transit):not(.gu-mirror)')
+                )
+                    return false;
+                return true;
+            }
+        });
+
+        document.getElementById("check-drag-and-drop-<%= uuid %>").addEventListener('click', () => {
+            for (let ans_box of question_list.getElementsByClassName('answer-box')) {
+                let key = ans_box.dataset.qaMapping;
+                let answer = ans_box.querySelector('.answer');
+                if (!answer || answer.dataset.qaMapping != ans_box.dataset.qaMapping) {
+                    alert("Sorry. That's not quite right.", "warning")
+                    return;
+                }
+            }
+            alert("Correct!!!", "success")
+        })
+    })();
+</script>

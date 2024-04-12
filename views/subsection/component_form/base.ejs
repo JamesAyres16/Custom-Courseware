@@ -1,0 +1,78 @@
+
+<% if (typeof locals.component === 'undefined') { %>
+    <% locals.component = false; %>
+<% } %>
+<% if (locals.component) { %>
+    <% locals.componentType = locals.component.type; %>
+<% } %>
+
+<form
+    data-component-type-id="<%= componentType.id %>"
+    data-component-name="<%= componentType.name %>"
+    <% if (component) { %>
+        data-component-id="<%= component.id %>"
+    <% } %>
+    enctype='multipart/form-data'
+>
+    <h3><%= componentType.name %></h3>
+
+    <label class="form-label">Component Width</label>
+    <input 
+        type="range" 
+        class="form-range" 
+        min="1" max="12" step="1"
+        name="width"
+        <% if (component) { %>
+            value="<%=component.width%>"
+        <% } %>
+    >    
+
+    <label class="form-label mt-2 w-100">
+        Component Height
+    </label>
+    <input 
+        type="number" 
+        class="form-control height-input"
+        min="75"
+        name="height"
+        <% if (component && component.height) { %>
+            value="<%=component.height%>"
+            placeholder="<%=component.height%>"
+        <% } %>
+    >
+
+    <label class="form-check-label mt-2">
+        <input 
+            type="checkbox"
+            class="form-check-input auto-height" 
+            name="auto-height"
+            <% if (!component || !component.height) { %>
+                checked
+            <% } %>
+        >
+        Auto Height
+    </label>
+
+    <%- include(componentType.variable, { component: component }) %>
+
+    <% let action = (component) ? 'Edit': 'Add'; %>
+    <button 
+        type="submit" 
+        class="btn btn-success mt-3 w-100"
+        data-purpose="<%= action %>"
+    >
+        <%= action %>
+        <%= componentType.name %>
+    </button>
+    <% if (component) { %>
+        <button
+            type="button" 
+            class="btn btn-danger mt-3 w-100"
+            data-bs-toggle="modal" 
+            data-bs-target="#verify-delete-modal"
+            data-show-delete-func="delete_component_verification"
+        >
+            Delete
+        </button>
+    <% } %>
+</form>

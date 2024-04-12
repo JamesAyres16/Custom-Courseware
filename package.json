@@ -1,0 +1,47 @@
+{
+  "name": "custom-courseware",
+  "version": "1.0.0",
+  "description": "Supports the creation of custom content for course creators",
+  "main": "app.js",
+  "dependencies": {
+    "@prisma/client": "^4.8.1",
+    "dotenv": "^16.0.3",
+    "ejs": "^3.1.8",
+    "ejs-lint": "^2.0.0",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "form-data": "^4.0.0",
+    "jest": "^29.3.1",
+    "mailgun.js": "^10.2.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^2.0.20",
+    "passport": "^0.6.0",
+    "passport-local": "^1.0.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "prep": "[ -d keys ] || ./make-cert.sh && docker compose up -d",
+    "start": "nodemon -e ejs,js,css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/JamesAyres16/Custom-Courseware.git"
+  },
+  "keywords": [
+    "Node",
+    "Express",
+    "ejs"
+  ],
+  "author": "James Ayres",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JamesAyres16/Custom-Courseware/issues"
+  },
+  "homepage": "https://github.com/JamesAyres16/Custom-Courseware#readme",
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "prisma": "^4.8.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4"
+  }
+}

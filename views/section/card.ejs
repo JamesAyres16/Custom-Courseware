@@ -1,0 +1,42 @@
+
+<div 
+    class="col col-sm-12 col-md-6 section-menu-card" 
+    id="<%=section.id%>" 
+    data-enable-subsections="<%= section.enableSubsections %>"
+>
+    <div 
+        class="card card-cover h-100 overflow-hidden text-bg-dark rounded-3 shadow-lg menu-card mb-3" 
+        style="background-image: url('<%=section.imageURL%>');"
+    >
+        <% if (locals.admin_view) { %>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end m-3">
+                <button 
+                    class="btn btn-success me-md-2" 
+                    type="button"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#section-modal"
+                    role="put"
+                >
+                    Edit
+                </button>
+                <button 
+                    class="btn btn-danger" 
+                    type="button"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#verify-delete-modal"
+                    data-show-delete-func="delete_section_verification"
+                >
+                    Delete
+                </button>
+            </div>
+        <% } %>
+        <div 
+            class="d-flex flex-column h-100 p-5 pb-4 text-white text-shadow-1" 
+            onclick="location.href='/sections/<%=section.id%>'"
+        >
+            <h3 class="pt-5 mt-4 mb-4 display-6 lh-1 fw-bold text-capitalize section-title">
+                <%=section.name%>
+            </h3>
+        </div>
+    </div>
+</div>

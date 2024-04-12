@@ -1,0 +1,26 @@
+
+<header class="d-flex flex-wrap justify-content-center px-5 py-3 mb-4 border-bottom">
+    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+      <img class="bi me-2" width="40" height="32" src="/media/required/favicon.svg">
+      <span class="fs-4">Custom Courseware</span>
+    </a>
+
+    <ul class="nav nav-pills">
+      <li class="nav-item"><a href="/" class="nav-link">Home</a></li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          data-bs-toggle="modal"
+          data-bs-target="#glossary-modal"
+          href=""
+        >
+          Glossary
+        </a>
+      </li>
+      <li class="nav-item" id="logout-link"><a href="/logout" class="nav-link">Logout</a></li>
+      <script>
+        if (location.pathname == "/login")
+          document.getElementById("logout-link").style.display = 'none';
+      </script>
+    </ul>
+</header>

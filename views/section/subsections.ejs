@@ -1,0 +1,116 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+
+<div class="container px-4 py-5">
+    <% var classStr = "pb-2 border-bottom" %>
+    <% if (locals.admin_view) classStr += " d-flex justify-content-between align-items-center" %>
+    <div class="<%= classStr %>">
+        <h1 class=""><%= section.name %></h1>
+        <% if (locals.admin_view) { %>
+            <button 
+                type="button" 
+                class="btn btn-lg btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#subsection-modal"
+            >
+                <i class="bi bi-plus"></i> Add Element
+            </button> 
+        <% } %>
+    </div>
+    <div 
+        id="subsection-column" 
+        class="row row-cols-1 row-cols-md-2 align-items-stretch g-4 py-5"
+    >
+        <% section.subsections.forEach(subsection => { %>
+            <%- include('../subsection/card', {subsection: subsection})%>
+        <% }) %>
+        <% if (!section.subsections.length) { %>
+            <div class="col" id="no-subsection-avalible">
+                <h3>No subsections avalible.</h3>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<% if (locals.admin_view) { %>
+    <form enctype='multipart/form-data' method='post' id="subsection-form">
+    <div 
+        class="modal fade" 
+        id="subsection-modal" 
+        tabindex="-1"  
+    >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="subsection-modal-title">New Subsection</h5>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="subsection-name" class="form-label">Name</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="subsection-name" 
+                        name="subsection_name" 
+                        required
+                    >
+                </div>
+                                    
+                <div class="mb-3">
+                    <label class="form-label" for="subsection-image">
+                        Upload Background Image
+                    </label>
+                    <input 
+                        type="file" 
+                        class="form-control" 
+                        id="subsection-image" 
+                        name="subsection_image" 
+                        accept="image/png, image/jpeg" 
+                        required
+                    >
+                    <div class="form-text">
+                        <small>
+                            Upload Image for subsection card. 
+                            Free Photos can be found on sites like unsplash.
+                        </small>
+                    </div>
+                </div> 
+                <div class="mb-3">
+                    <label class="form-label" for="section_id">
+                        Assigned Section
+                    </label>
+                    <select class="form-select" name="section_id" id="section_id">
+                        <option value="<%= section.id %>" selected><%= section.name %></option>
+                        <% sections.forEach(other_section => { %>
+                            <option value="<%= other_section.id %>"><%= other_section.name %></option>
+                        <% }); %>
+                    </select>
+                </div> 
+            </div>
+            <div class="modal-footer">
+            <button 
+                type="button" 
+                class="btn btn-secondary" 
+                data-bs-dismiss="modal" 
+                id="close-subsection-form"
+            >
+                Close
+            </button>
+            <button 
+                type="submit" 
+                class="btn btn-primary" 
+                id="submit-subsection"
+            >
+                Save
+            </button>
+            </div>
+        </div>
+        </div>
+    </div>
+    </form>
+<% } %>
+
+<% if (locals.admin_view) { %>
+    <script src="/scripts/section/admin/subsections.js" defer></script>
+<% } %>
+<%- include('../partials/footer') %>

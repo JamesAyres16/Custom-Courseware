@@ -1,0 +1,174 @@
+<% const uuid = Math.ceil(Math.random() * 2 ** 32); %>
+
+<div class="pt-4" id="multiple-choice-question-<%= uuid %>">
+    <label>Question</label>
+    <div class="form-text mt-0">
+        <small>Type out a question here.</small>
+    </div>
+    <div id="multiple-choice-question-editor-<%= uuid %>" style="height: 10vh;"></div>
+    <input 
+        type="text" class="d-none" name="question"
+        id="multiple-choice-question-container-<%= uuid %>"
+    >
+</div>
+
+<div class="my-3">
+    <label class="form-check-label">
+        Correct Answer
+    </label>
+    <div class="form-text mt-0">
+        <small>First option is 1. Second option is 2. And so on...</small>
+    </div>
+    <select 
+        name="correctIndex" 
+        class="form-select" 
+        id="multiple-choice-answer-<%= uuid %>" 
+        required
+    >
+    </select>
+</div>
+
+<div id="multiple-choice-option-<%= uuid %>" class="my-3">
+    <label>Multiple Choice Option</label>
+    <div class="form-text mt-0">
+        <small>Add a multiple choice option here.</small>
+    </div>
+    <div id="multiple-choice-option-editor-<%= uuid %>" style="height: 10vh;"></div>
+</div>
+
+<div class="d-flex flex-row-reverse mb-4">
+    <button 
+        id="append-multiple-choice-option-btn-<%= uuid %>"
+        type="button" 
+        class="btn btn-primary btn-lg multiple-choice-option-add" 
+        data-uuid="<%= uuid %>"
+    >
+        Add Option
+    </button>
+</div>
+
+<div id="mutiple-choice-option-display-<%= uuid %>" data-uuid="<%= uuid %>"></div>
+
+<!-- Here we sync added options to the form -->
+<div 
+    id="mutiple-choice-options-container-<%= uuid %>" 
+    class="d-none" 
+    data-uuid="<%= uuid %>"
+></div>
+
+<button 
+    type="button" 
+    id="edit-multiple-choice-btn-<%= uuid %>"
+    data-bs-toggle="modal" 
+    data-bs-target="#edit-multiple-choice-modal-<%= uuid %>"
+    class="d-none"
+></button>
+<div class="modal fade" id="edit-multiple-choice-modal-<%= uuid %>">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Edit Option</h1>
+                <button 
+                    type="button" 
+                    class="btn-close" 
+                    data-bs-dismiss="modal"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <label>Option</label>
+                <div class="form-text mt-0">
+                    <small>Edit multiple choice option here.</small>
+                </div>
+                <div 
+                    id="multiple-choice-update-option-editor-<%= uuid %>" 
+                    style="height: 10vh;"
+                ></div>
+            </div>
+            <div class="modal-footer">
+                <button 
+                    type="button" 
+                    class="btn btn-secondary" 
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </button>
+                <button 
+                    id="update-multiple-choice-<%= uuid %>"
+                    type="button" 
+                    class="btn btn-primary"
+                >
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    ;(() => {
+        let edit_options = {
+            modules: {
+                toolbar: [
+                    [
+                        { 'font': [] },
+                        { 'size': [] }
+                    ],
+                    [
+                        { 'color': [] }, { 'background': [] },
+                        'bold', 'italic', 'underline', 'strike',
+                    ],
+                    [
+                        { 'align': [] },
+                        { 'indent': '-1'}, 
+                        { 'indent': '+1' }
+                    ],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }, 'formula']
+                ]
+            },
+            theme: 'snow' 
+        }
+        new Quill("#multiple-choice-option-editor-<%= uuid %>", edit_options);
+
+        let question_quill = new Quill(
+            "#multiple-choice-question-editor-<%= uuid %>", edit_options
+        );
+
+
+        // populate question if update form
+        //<% if (locals.component){ %>
+            let delta = JSON.parse(
+                String.raw`<%- component.multipleChoiceQuestion.question %>`
+            );
+            question_quill.setContents(delta);
+        //<% } %>
+
+        const q_form_input = document.getElementById(
+            "multiple-choice-question-container-<%= uuid %>"
+        );
+        q_form_input.value = JSON.stringify(question_quill.getContents());
+        question_quill.on('text-change', (delta, oldDelta, source) => {
+            q_form_input.value = JSON.stringify(question_quill.getContents());
+        });
+
+        // relative div breaks modal, move to bottom of page
+        // aka out of relative div
+        document.getElementsByTagName('body')[0].after(
+            document.getElementById("edit-multiple-choice-modal-<%= uuid %>")
+        )
+        // console.log('here')
+
+        // <% if (locals.component) { %>
+            // <% for (let option of component.multipleChoiceQuestion.options) { %>
+                addMultipleChoiceOption(
+                    JSON.parse(String.raw`<%- option %>`), "<%= uuid %>"
+                )
+            // <% } %>
+            regesterMultipleChoiceBtn(
+                document.getElementById(
+                    "append-multiple-choice-option-btn-<%= uuid %>"
+                )
+            )
+        // <% } %>
+    })();
+</script>

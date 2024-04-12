@@ -1,0 +1,68 @@
+
+<div class="form-floating my-3">
+    <input 
+        type="email" 
+        class="form-control" 
+        id="email"
+        name="email" 
+        placeholder="someone@somewhere.com"
+        required
+    >
+    <label for="email">Email</label>
+</div>
+<div class="form-floating my-3">
+    <input 
+        type="password" 
+        class="form-control" 
+        id="password" 
+        name="password"
+        placeholder="Password"
+        required
+    >
+    <label for="password">Password</label>
+</div>
+
+<p class="my-2 mb-3 text-muted text-end">
+    <a href="javascript: submitForm(this)">Forgot</a> password?
+    <script>
+        function submitForm(link) {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Email address is required', 'danger')
+                return
+            }
+            fetch('/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            }).then(async res => {
+                const hasMsg = (
+                    res.headers.get('content-type')?.includes('text/plain')
+                );
+                console.log(res)
+                if (!res.ok) {
+                    const msg = hasMsg ? await res.text() : 'Non-Ok Response';
+                    throw new Error(msg);
+                }
+                else if (hasMsg) {
+                    console.log(await res.text())
+                }
+                alert('Password Reset Email has been Sent', 'success')
+            }).catch(
+                err => alert(err, 'danger')
+            );
+        }
+    </script>
+</p>
+
+<button class="w-100 btn btn-lg btn-primary" type="submit">
+    Sign in
+</button>
+
+<p class="my-2 mb-3 text-muted text-start">
+    Or <a href="/signup">Sign Up</a>
+</p>

@@ -1,0 +1,20 @@
+<% var classStr = `position-relative col-${component.width} p-2` %>
+<% if (locals.admin_view) classStr += ' border border-secondary'%>
+<div 
+    data-component-id="<%= component.id %>"
+    data-component-type-id="<%= component.type.id %>"
+    class="<%= classStr %>"
+    <%# the below line is correct... errors with some linters %>
+    style="<%= (component.height? `height: ${component.height}px;`: "min-height: 75px;") %>"
+>
+    <% if (locals.admin_view) { %>
+        <button 
+            type="button" 
+            class="btn btn-secondary m-3 position-absolute top-0 end-0 edit-component"
+            style="z-index: 5;"
+        >
+            <i class="bi bi-pencil"></i>
+        </button>
+    <% } %>
+    <%- include(component.type.variable, { component: component }) %>
+</div>

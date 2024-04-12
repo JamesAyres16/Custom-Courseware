@@ -1,0 +1,66 @@
+
+<div 
+    class="modal fade" 
+    id="verify-delete-modal" 
+    tabindex="-1" 
+>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="verify-delete-label">
+                Are you sure?
+                </h1>
+                <button 
+                    id="close-verify-delete" 
+                    type="button" 
+                    class="btn-close" 
+                    data-bs-dismiss="modal" 
+                >
+                </button>
+            </div>
+            <div class="modal-body">
+                Click yes to delete <span id="thing-to-be-deleted"></span>. 
+                Otherwise click no.
+            </div>
+            <div class="modal-footer">
+                <button 
+                    type="button" 
+                    class="btn btn-secondary" 
+                    data-bs-dismiss="modal"
+                >
+                    No
+                </button>
+                <button 
+                    id="delete-verified" 
+                    type="button" 
+                    class="btn btn-danger"
+                >
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// event.relatedTarget is the btn that was
+// pressed to trigger this event
+// you can set data-show-func can be defined
+// different on different buttons for different
+// actions
+document.getElementById('verify-delete-modal')
+        .addEventListener(
+            'show.bs.modal', 
+            event => eval(event.relatedTarget.dataset.showDeleteFunc)(event)
+        );
+
+// called when delete is verified
+// need to add dataset to verify button
+// to define action
+document.getElementById('delete-verified')
+        .addEventListener(
+            'click', 
+            event => eval(event.target.dataset.deleteVerifiedFunc)(event)
+        );
+
+</script>

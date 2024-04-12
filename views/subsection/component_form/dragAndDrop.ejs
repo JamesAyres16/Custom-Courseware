@@ -1,0 +1,184 @@
+<% 
+    const uuid = Math.ceil(Math.random() * 2 ** 32);
+    let combos = [];
+    if (locals.component) {
+        combos = component.dragAndDrop.questions.map((question, index) => {
+            return [question, component.dragAndDrop.answers[index]]
+        });
+    }
+%>
+
+<div class="pt-4">
+    <label for="drag-drop-header-<%= uuid %>">Header</label>
+    <div class="form-text mt-0">
+        <small>Optional heading. Text typed here will appear above your drag and drop question.</small>
+    </div>
+    <input type="text" name="header" id="drag-drop-header-<%= uuid %>" style="display: none;">
+    <div id="drag-drop-heading-editor-<%= uuid %>" style="min-height: 15vh;">
+        <% if (locals.component){ %>
+            <%-component.dragAndDrop.header %>
+        <% } %>
+    </div>
+</div>
+
+<div class="row my-3 qa-container" data-uuid="<%= uuid %>">
+    <div class="col">
+        <label>Question</label>
+        <div class="form-text mt-0">
+            <small>Type out a question here.</small>
+        </div>
+        <div id="drag-drop-question-editor-<%= uuid %>" style="height: 10vh;"></div>
+    </div>    
+    <div class="col">
+        <label>Answer</label>
+        <div class="form-text mt-0">
+            <small>What is the answer to your question?</small>
+        </div>
+        <div id="drag-drop-answer-editor-<%= uuid %>" style="height: 10vh;"></div>
+    </div>
+</div>
+
+<div class="d-flex flex-row-reverse mb-4">
+    <button 
+        id="append-qa-btn-<%= uuid %>"
+        type="button" 
+        class="btn btn-primary btn-lg drag-drop-add-qa" 
+        data-uuid="<%= uuid %>"
+    >
+        Add Q/A
+    </button>
+</div>
+
+<div id="qa-display-<%= uuid %>" data-uuid="<%= uuid %>" class="text-center">
+    <!-- fill this with questions and answers -->
+</div>
+
+<div class="row d-none" id="qa-container-<%= uuid %>" data-uuid="<%= uuid %>">
+    <!-- fill this with questions and answers -->
+</div>
+
+<button 
+    type="button" 
+    id="edit-qa-modal-btn-<%= uuid %>"
+    data-bs-toggle="modal" 
+    data-bs-target="#edit-qa-modal-<%= uuid %>"
+    class="d-none"
+>
+</button>  
+<div class="modal fade" id="edit-qa-modal-<%= uuid %>">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Edit Q/A</h1>
+                <button 
+                    type="button" 
+                    class="btn-close" 
+                    data-bs-dismiss="modal"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <div class="row my-3 qa-update-container">
+                    <div class="col">
+                        <label>Question</label>
+                        <div class="form-text mt-0">
+                            <small>Type out a question here.</small>
+                        </div>
+                        <div 
+                            id="drag-drop-update-question-editor-<%= uuid %>" 
+                            style="height: 10vh;"
+                        ></div>
+                    </div>    
+                    <div class="col">
+                        <label>Answer</label>
+                        <div class="form-text mt-0">
+                            <small>What is the answer to your question?</small>
+                        </div>
+                        <div 
+                            id="drag-drop-update-answer-editor-<%= uuid %>" 
+                            style="height: 10vh;"
+                        ></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button 
+                    id="update-qa-<%= uuid %>"
+                    type="button" 
+                    class="btn btn-primary"
+                >
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    ;(() => {
+        let options = {
+            modules: {
+                toolbar: [
+                    [
+                        { 'font': [] },
+                        { 'size': [] }
+                    ],
+                    [
+                        { 'color': [] }, { 'background': [] },
+                        'bold', 'italic', 'underline', 'strike',
+                    ],
+                    [
+                        { 'align': [] },
+                        { 'indent': '-1'}, 
+                        { 'indent': '+1' }
+                    ],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }, 'formula']
+                ]
+            },
+            theme: 'snow' 
+        };
+
+
+        options.placeholder = 'Type answer here...'
+        new Quill("#drag-drop-answer-editor-<%= uuid %>", options);
+
+        options.placeholder = 'Type question here...'
+        new Quill("#drag-drop-question-editor-<%= uuid %>", options);
+
+        options.placeholder = 'Type heading here...'
+        let quill = new Quill("#drag-drop-heading-editor-<%= uuid %>", options);
+
+        // comments are just to hide linting errors
+        // do NOT delete
+        //<% if (locals.component?.dragAndDrop?.header){ %>
+            let delta = JSON.parse(String.raw`<%- component.dragAndDrop.header %>`);
+            quill.setContents(delta);
+        //<% } %>
+
+        const container = document.getElementById("drag-drop-header-<%= uuid %>");
+        container.value = JSON.stringify(quill.getContents());
+        quill.on('text-change', (delta, oldDelta, source) => {
+            container.value = JSON.stringify(quill.getContents());
+        });
+
+        // relative div breaks modal, move to bottom of page
+        // aka out of relative div
+        document.getElementsByTagName('body')[0].after(
+            document.getElementById("edit-qa-modal-<%= uuid %>")
+        )
+
+        // <% for (let combo of combos) { %>
+            addDragDropQA(
+                JSON.parse(String.raw`<%- combo[0] %>`), 
+                JSON.parse(String.raw`<%- combo[1] %>`),
+                "<%= uuid %>"
+            )
+        // <% } %>
+        // <% if (component) { %>
+            regesterDragDropBtn(
+                document.getElementById("append-qa-btn-<%= uuid %>")
+            )
+        // <% } %>
+    })();
+</script>

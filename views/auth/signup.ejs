@@ -1,0 +1,78 @@
+<div class="form-floating my-3">
+    <input 
+        type="email" 
+        class="form-control" 
+        id="email" 
+        name="email" 
+        placeholder=""
+        required
+    >
+    <label for="email">Email</label>
+</div>
+<div class="form-floating my-3">
+    <input 
+        type="text" 
+        class="form-control" 
+        id="firstName"
+        name="firstName" 
+        placeholder=""
+        required
+    >
+    <label for="firstName">First Name</label>
+</div>
+<div class="form-floating my-3">
+    <input 
+        type="text" 
+        class="form-control" 
+        id="lastName"
+        name="lastName" 
+        placeholder=""
+    >
+    <label for="lastName">Last Name</label>
+</div>
+<div class="form-floating my-3">
+    <input 
+        type="password" 
+        class="form-control" 
+        id="password"
+        name="password" 
+        placeholder=""
+        required
+    >
+    <label for="password">Password</label>
+</div>
+<div class="form-floating my-3">
+    <input 
+        type="password" 
+        class="form-control" 
+        id="passwordVerification" 
+        name="passwordVerification" 
+        placeholder=""
+        required
+    >
+    <label for="passwordVerification">Confirm Password</label>
+</div>
+
+<button 
+    class="w-100 btn btn-lg btn-primary" 
+    type="submit" 
+>
+    Create
+</button>
+<script>
+    document.querySelector('form').addEventListener('submit', event => {
+        if (
+            document.getElementById('password').value !=
+            document.getElementById('passwordVerification').value
+        ) {
+            alert('Passwords do not match', 'danger');
+            document.getElementById('password').value
+            document.getElementById('passwordVerification').value
+            event.preventDefault();
+        }
+    })
+</script>
+
+<p class="mt-2 mb-3 text-muted text-start">
+    Or <a href="/login">Login</a>
+</p>

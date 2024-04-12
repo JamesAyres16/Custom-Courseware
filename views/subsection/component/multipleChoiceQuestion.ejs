@@ -1,0 +1,67 @@
+<% const uuid = Math.ceil(Math.random() * 2 ** 32) %>
+<div>
+    <div id="multiple-choice-question-<%= uuid %>"></div>
+    <div id="multiple-choice-options-<%= uuid %>">
+        <% for (let [index, option] of component.multipleChoiceQuestion.options.entries()) { %>
+            <div class="row multiple-choice-option-c multiple-choice-option-c-<%= uuid %>">
+                <div class="col-1 pe-0">
+                    <div class="mt-2 d-flex justify-content-end">
+                        <i class="bi bi-square-fill"></i>
+                    </div>
+                </div>
+                <div 
+                    class="col-11 multiple-choice-option multiple-choice-option-<%= uuid %>" 
+                    data-index="<%= index %>"
+                ></div>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+
+<script>
+    (async () => {
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        while (typeof Quill == 'undefined') {
+            await sleep(500);
+        }
+
+        let options = {
+            modules: {},
+            readOnly: true
+        };
+        new Quill(
+            document.getElementById("multiple-choice-question-<%= uuid %>"),
+            options
+        ).setContents(
+            JSON.parse(String.raw`<%- component.multipleChoiceQuestion.question %>`)
+        );
+
+        let q_options = JSON.parse(
+            String.raw`<%- JSON.stringify(component.multipleChoiceQuestion.options) %>`
+        );
+        for (
+            let q_option of document.getElementsByClassName(
+                'multiple-choice-option-<%= uuid %>'
+            )
+        ) {
+            new Quill(q_option, options).setContents(JSON.parse(
+                q_options[q_option.dataset.index]
+            ))
+            q_option.addEventListener('click', () => {
+                console.log(
+                    q_option.dataset.index
+                )
+                console.log(
+                    "<%= component.multipleChoiceQuestion.correctIndex %>"
+                )
+                if (q_option.dataset.index == +"<%= component.multipleChoiceQuestion.correctIndex %>")
+                    alert('Correct!!!', 'success');
+                else
+                    alert("Sorry. That's not right", 'warning');
+
+            })
+        }
+
+    })();
+</script>

@@ -1,0 +1,14 @@
+<p>Hello <%= user.firstName%>,</p>
+<p>
+    In order to verify address we need you to enter
+    a verification code. Your verification code is...
+</p>
+<p style="font-size: large; font-weight:bold;">
+    <%= user.verificationCode.code %>
+</p>
+<p>
+    If you try to sign in again you will be directed to 
+    the email verification form. 
+</p>
+<p>This code expires in 30 minutes.</p>
+<p>- Custom Courseware </p>

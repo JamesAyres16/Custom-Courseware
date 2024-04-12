@@ -1,0 +1,53 @@
+<div 
+    class="min-vh-100 carousel-item p-1" 
+    data-bs-interval="false" 
+    data-slide-id="<%= slide.id %>"
+    data-slide-title="<%= slide.title %>"
+>
+    <% if (locals.admin_view) { %>
+        <div class="d-flex justify-content-end list-group list-group-horizontal pe-5">
+            <button 
+                type="button"
+                class="btn btn-primary btn-sm list-group-item"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#add-element-panel"
+            >
+                <i class="bi bi-plus"></i> Add Component
+            </button>
+            <button 
+                type="button"
+                class="btn btn-secondary btn-sm list-group-item"
+                data-bs-toggle="modal"
+                data-bs-target="#modifySlideModal"
+            >
+                <i class="bi bi-pencil"></i> Modify Slide
+            </button>
+            <button
+                class="btn btn-danger btn-sm list-group-item"
+                type="button"
+                style="z-index: 3;"
+                data-bs-toggle="modal" 
+                data-bs-target="#verify-delete-modal"
+                data-show-delete-func="delete_slide_verification"
+            > 
+                <i class="bi bi-trash"></i> Delete Slide
+            </button>
+        </div>
+    <% } %>
+    <div class="w-75 m-auto">
+        <% var classStr = "text-center title slide-title " %>
+        <% classStr += locals.admin_view ? "mt-3 mb-5": "my-5" %>
+        <h1 class="<%= classStr %>"><%= slide.title %></h1>
+        <div class="row g-0">
+        <% if (!slide.components || slide.components.length == 0) { %>
+            <div class="col no-components">
+                No Content to Display...
+            </div>
+        <% } else { %>
+            <% slide.components.forEach(component => { %>
+                <%- include(`component/base`, { component: component }) %>
+                <% }) %>
+        <% } %>
+        </div>
+    </div>
+</div>

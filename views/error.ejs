@@ -1,0 +1,23 @@
+<%- include('./partials/header') %>
+
+<main 
+    class="
+        position-absolute 
+        top-50 start-50 
+        translate-middle
+        text-center
+    "
+>
+    <div
+        class="my-5"
+        style="
+            background: center / contain no-repeat url('/media/required/broken_robot.jpg');
+            height: 250px;
+        "
+    ></div>
+    <h1 class="fs-1">Error</h1>
+    <p class="fs-3">Code - <%= code %></p>
+    <p class="lead"><%= msg %></p>
+</main>
+
+<%- include('./partials/footer') %>

@@ -1,0 +1,112 @@
+<% const uuid = Math.ceil(Math.random() * 2 ** 32)%>
+<div id="ref-container-<%= uuid %>">
+    <div class="my-3">
+        <label class="form-label" for="ref-section-<%= uuid %>">
+            Assigned Section
+        </label>
+        <select class="form-select" name="sectionId" id="ref-section-<%= uuid %>" required></select>
+    </div>  
+    <div class="mb-3">
+        <label class="form-label" for="ref-subsection-<%= uuid %>">
+            Assigned Subsection
+        </label>
+        <select class="form-select" name="subsectionId" id="ref-subsection-<%= uuid %>"></select> 
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="ref-text-<%= uuid %>">Message</label>
+        <input type="text" name="message" id="ref-text-<%= uuid %>" style="display: none;">
+        <div id="ref-text-editor-<%= uuid %>" style="min-height: 30vh;"></div>
+    </div>  
+</div>
+
+<script type="module">
+    ;(async () => {
+        let section_dropdown = document.getElementById("ref-section-<%= uuid %>");
+        let subsection_dropdown = document.getElementById("ref-subsection-<%= uuid %>");
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        while (typeof section_mapping == 'undefined' || !section_mapping) {
+            await sleep(500);
+        }
+
+        section_dropdown.innerHTML = '';
+        for (let section of section_mapping) {
+            let option = document.createElement('option');
+            option.value = section.id;
+            option.innerText = section.name;
+            section_dropdown.appendChild(option);
+        }   
+
+        function setSubsections(section) {
+            subsection_dropdown.innerHTML = ''
+            // subsections not required so blank option is provided...
+            subsection_dropdown.appendChild(
+                document.createElement('option')
+            );
+            section.subsections.forEach(subsection => {
+                console.log(subsection)
+                let option = document.createElement('option');
+                option.value = subsection.id;
+                option.innerText = subsection.name;
+                subsection_dropdown.appendChild(option);
+            })
+        }
+
+        section_dropdown.addEventListener('change', () => {
+            let section = section_mapping.find(
+                section => section.id == +section_dropdown.value
+            )
+            setSubsections(section)
+        })
+
+        let section = section_mapping.find(
+            section => section.id == +section_dropdown.value
+        )
+        setSubsections(section)
+
+
+        // <% if (locals.component) { %>
+            section_dropdown.value = '<%= component.reference.sectionId %>'
+        // <% } %>
+        // <% if (locals.component?.reference?.subsectionId) { %>
+            subsection_dropdown.value = '<%= component.reference.subsectionId %>'
+        // <% } %>
+
+        let quill = new Quill('#ref-text-editor-<%= uuid %>', {
+            modules: {
+                toolbar: [
+                    [
+                        { 'font': [] },
+                        { 'size': [] }
+                    ],
+                    [
+                        { 'color': [] }, { 'background': [] },
+                        'bold', 'italic', 'underline', 'strike',
+                    ],
+                    [
+                        { 'align': [] },
+                        { 'indent': '-1'}, 
+                        { 'indent': '+1' }
+                    ],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'script': 'sub'}, { 'script': 'super' }, 'formula']
+                ]
+            },
+            placeholder: 'Type link message...',
+            theme: 'snow' 
+        });
+
+        // comments are just to hide linting errors
+        // do NOT delete
+        //<% if (locals.component){ %>
+            let delta = JSON.parse(String.raw`<%- component.reference.message %>`);
+            quill.setContents(delta);
+        //<% } %>
+
+        const container = document.getElementById("ref-text-<%= uuid %>");
+        container.value = JSON.stringify(quill.getContents());
+        quill.on('text-change', (delta, oldDelta, source) => {
+            container.value = JSON.stringify(quill.getContents());
+        });
+    })();
+</script>

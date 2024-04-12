@@ -1,0 +1,11 @@
+<% const uuid = Math.ceil(Math.random() * 2 ** 32)%>
+
+<div id="textbox-component<%= uuid %>" class="w-100"></div>
+<script type="module">
+    new Quill("#textbox-component<%= uuid %>", {
+        modules: {},
+        readOnly: true
+    }).setContents(
+        JSON.parse(String.raw`<%- component.textbox.data %>`)
+    );
+</script>

@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+
+<div class="row text-center">
+<main 
+    class="
+        col-sm-9 col-md-7 col-lg-5 col-xl-3 
+        position-absolute 
+        top-50 start-50 
+        translate-middle
+    "
+>
+    <form action="<%=action%>" method="post">
+        <img 
+            class="mb-4" 
+            src="/media/required/favicon.svg" 
+            width="72" 
+            height="57"
+        >
+        <h1 class="h3 mb-2 fw-normal">Welcome to Custom Couseware</h1>
+        <h3 class="h5 mb-4 fw-normal text-capitalize">
+            <%=action.replace('-', ' ')%>
+        </h3>
+
+        <%- include(`${action}.ejs`, locals.options) %>
+
+        <p class="my-3 text-muted">A James Ayres Product</p>
+    </form>
+</main>
+</div>
+
+<%- include('../partials/footer') %>
