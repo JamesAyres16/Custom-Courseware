@@ -2,6 +2,8 @@
 Personal Project. Courseware website.
 
 ## Setup
+Copy .env.template to .env and populate with sensible values
+
 run `npm install` to install dependencies
 
 run `npm start` to start server
