@@ -16,7 +16,6 @@
             </p>
         </div>
     </div>
-    <% if (locals.admin_view) { %>
     <div class="d-flex justify-content-end">
         <button 
             type="button"
@@ -24,10 +23,9 @@
             data-bs-toggle="modal"
             data-bs-target="#section-modal"
         >
-            <i class="bi bi-plus"></i> Add Section 
+            <i class="bi bi-plus"></i> Create Course 
         </button>
     </div>
-    <% } %>
     <div 
         class="row g-4 py-5 section-container" 
         id="section-column"
@@ -43,7 +41,6 @@
     </style>
 </div>
 
-<% if (locals.admin_view) { %>
 <form enctype='multipart/form-data' method='post' id="section-form">
     <div 
         class="modal fade" 
@@ -93,7 +90,7 @@
                             <label class="form-check-label" for="enable_subsections">Enable Subsections</label>
                         </div>
                         <div class="form-text">
-                            <small>Check this box if you would like a section menu with mutiple slide decks.</small>
+                            <small>Check this box if you would like a section course with mutiple slide decks.</small>
                         </div>
                     </div>       
                 </div>
@@ -118,7 +115,6 @@
         </div>
     </div>
 </form>
-<script src="/scripts/section/admin/menu.js" defer></script>
-<% } %>
+<script src="/scripts/section/admin/course.js" defer></script>
 
 <%- include('../partials/footer') %>

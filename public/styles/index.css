@@ -1,9 +1,9 @@
-.menu-card {
+.course-card {
     background-size: cover; 
     background-position: center;
 }
 
-.menu-card:hover {
+.course-card:hover {
     background-color: grey;
     background-blend-mode: multiply;
 }
@@ -35,10 +35,10 @@
     box-shadow: none;
 }
 
-.section-menu-card:last-child:nth-of-type(odd):not(.gu-mirror) {
+.section-course-card:last-child:nth-of-type(odd):not(.gu-mirror) {
     width: 100% !important;
 }
-.subsection-menu-card:last-child:nth-of-type(odd):not(.gu-mirror) {
+.subsection-course-card:last-child:nth-of-type(odd):not(.gu-mirror) {
     width: 100% !important;
 }
 

@@ -32,7 +32,7 @@ const upload_img = multer({
 router.get('/', async (req, res) => {
     msg = req.session.msg;
     req.session.msg = '';
-    res.render('section/menu', {
+    res.render('section/home', {
         sections: await prisma.section.findMany({
             orderBy: { number: 'asc' }
         }),

@@ -1,6 +1,6 @@
 
 function delete_section_verification(event) {
-    const card = event.relatedTarget.closest('.section-menu-card');
+    const card = event.relatedTarget.closest('.section-course-card');
     const thing_to_be_deleted = document.getElementById('thing-to-be-deleted')
     thing_to_be_deleted.innerText = card.getElementsByClassName('section-title')[0].innerText;
     thing_to_be_deleted.dataset.src_id = card.id
@@ -39,7 +39,7 @@ document.getElementById('section-modal')
     const subsectionsCheckbox = document.getElementById('enable_subsections')
     if (method == 'put') {
         title.innerText = 'Update Section';
-        const card = event.relatedTarget.closest('.section-menu-card');
+        const card = event.relatedTarget.closest('.section-course-card');
         name_field.value = card.getElementsByClassName('section-title')[0].innerText;
         document.getElementById('section-image').required = false;
         submit.setAttribute('data-origin-id', card.id);
@@ -113,7 +113,7 @@ dragula(
 ).on('drop', async (el, target, src, sibling) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     const ordered_names = Array.from(
-        document.querySelectorAll('.section-menu-card:not(.gu-transit)')
+        document.querySelectorAll('.section-course-card:not(.gu-transit)')
     ).map(item => item.id)
 
     fetch('/sections/reorder', {

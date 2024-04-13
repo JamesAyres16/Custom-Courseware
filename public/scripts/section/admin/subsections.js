@@ -1,6 +1,6 @@
 
 function delete_subsection_verification(event) {
-    const card = event.relatedTarget.closest('.subsection-menu-card');
+    const card = event.relatedTarget.closest('.subsection-course-card');
     const thing_to_be_deleted = document.getElementById('thing-to-be-deleted')
     thing_to_be_deleted.innerText = card.getElementsByClassName('subsection-title')[0].innerText;
     thing_to_be_deleted.dataset.src_id = card.id
@@ -38,7 +38,7 @@ document.getElementById('subsection-modal')
     const method = event.relatedTarget.getAttribute('role');
     if (method == 'put') {
         title.innerText = 'Update Lesson';
-        const card = event.relatedTarget.closest('.subsection-menu-card');
+        const card = event.relatedTarget.closest('.subsection-course-card');
         name_field.value = card.getElementsByClassName('subsection-title')[0].innerText;
         document.getElementById('subsection-image').required = false;
         submit.setAttribute('data-origin-id', card.id);
@@ -111,7 +111,7 @@ dragula(
 ).on('drop', async (el, target, src, sibling) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     const ordered_names = Array.from(
-        document.querySelectorAll('.subsection-menu-card:not(.gu-transit)')
+        document.querySelectorAll('.subsection-course-card:not(.gu-transit)')
     ).map(item => item.id)
     console.log(ordered_names)
 
