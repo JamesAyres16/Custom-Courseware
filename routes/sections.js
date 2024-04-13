@@ -25,15 +25,15 @@ const upload_img = multer({
         else
             cb(null, true);
     } 
-}).single('section_image');
+}).single('course_image');
 
 
 
 router.get('/', async (req, res) => {
     msg = req.session.msg;
     req.session.msg = '';
-    res.render('section/home', {
-        sections: await prisma.section.findMany({
+    res.render('course/home', {
+        courses: await prisma.course.findMany({
             orderBy: { number: 'asc' }
         }),
         admin: req.user.admin,
@@ -43,32 +43,32 @@ router.get('/', async (req, res) => {
 })
 
 router.get('/json', async (req, res) => {
-    const sections = await prisma.section.findMany({
+    const courses = await prisma.course.findMany({
         include: { 
-            subsections: { orderBy: { number: 'asc' } },
+            lessons: { orderBy: { number: 'asc' } },
         },
         orderBy: { number: 'asc' }  
     })
-    res.json(sections);
+    res.json(courses);
 })
 
 
 router.get('/:id', async (req, res, next) => {
     try {
-        const section = await prisma.section.findUniqueOrThrow({
+        const course = await prisma.course.findUniqueOrThrow({
             where: { id: +req.params.id },
-            include: { subsections: {
+            include: { lessons: {
                 orderBy: { number: 'asc' }
             }},
         });
-        if (section.enableSubsections)
+        if (course.enableLessons)
             res.render(
-                'section/subsections', { 
-                    section: section, 
-                    sections: await prisma.section.findMany({
+                'course/lessons', { 
+                    course: course, 
+                    courses: await prisma.course.findMany({
                         where: { 
-                            enableSubsections: true,
-                            NOT: { id: section.id }
+                            enableLessons: true,
+                            NOT: { id: course.id }
                         },
                         orderBy: { name: 'desc' }
                     }),
@@ -77,7 +77,7 @@ router.get('/:id', async (req, res, next) => {
                 }
             );
         else
-            res.redirect(`/subsections/${section.subsections[0].id}`);
+            res.redirect(`/lessons/${course.lessons[0].id}`);
     }
     catch(err) {
         next(err)
@@ -93,8 +93,8 @@ router.use(isAdmin);
 
 router.post('/', upload_img, async (req, res) => {
     try {
-        section = await prisma.$transaction(async (tx) => {
-            const query_res = await tx.section.aggregate({
+        course = await prisma.$transaction(async (tx) => {
+            const query_res = await tx.course.aggregate({
                 _max: { number: true }
             })
             let number = query_res._max.number + 1;
@@ -102,12 +102,12 @@ router.post('/', upload_img, async (req, res) => {
                 number = 0
             imageURL = `/media/${req.file.filename}`
             let data = {
-                name: req.body.section_name,
+                name: req.body.course_name,
                 number: number,
                 imageURL: imageURL,
-                enableSubsections: !!req.body.enable_subsections
+                enableLessons: !!req.body.enable_lessons
             }
-            if (!data.enableSubsections) {
+            if (!data.enableLessons) {
                 let image_path = path.join(process.env.ROOT, 'public', imageURL)
                 let diff = (Math.random() + 1).toString(36).substring(7);
                 fs.copyFileSync(
@@ -115,9 +115,9 @@ router.post('/', upload_img, async (req, res) => {
                     image_path + diff, 
                     fs.constants.COPYFILE_EXCL
                 );
-                data.subsections = {
+                data.lessons = {
                     create: { 
-                        name: req.body.section_name,
+                        name: req.body.course_name,
                         number: 1,
                         imageURL: imageURL + diff,
                         slides: {
@@ -126,10 +126,10 @@ router.post('/', upload_img, async (req, res) => {
                     }
                 }
             }
-            return await tx.section.create({ data: data })
+            return await tx.course.create({ data: data })
         })
-        res.render('section/card', { 
-            section: section, 
+        res.render('course/card', { 
+            course: course, 
             admin: req.user.admin,
             admin_view: req.user.admin_view 
         });
@@ -151,38 +151,38 @@ router.post('/', upload_img, async (req, res) => {
     }
 })
 
-async function checkSubsectionChange(req, res, section) {
-    if (req.body.enable_subsections && !section.enableSubsections) {
-        return await prisma.section.update({
-            where: { id: section.id },
-            data: { enableSubsections: true }
+async function checkLessonChange(req, res, course) {
+    if (req.body.enable_lessons && !course.enableLessons) {
+        return await prisma.course.update({
+            where: { id: course.id },
+            data: { enableLessons: true }
         })
     }
 
-    if (!req.body.enable_subsections && section.enableSubsections) {
-        if (section.subsections.length == 1) {
-            section = await prisma.section.update({
-                where: { id: section.id },
-                data: { enableSubsections: false }
+    if (!req.body.enable_lessons && course.enableLessons) {
+        if (course.lessons.length == 1) {
+            course = await prisma.course.update({
+                where: { id: course.id },
+                data: { enableLessons: false }
             })
         }
-        else if (section.subsections.length == 0) {
-            let image_path = path.join(process.env.ROOT, 'public', section.imageURL)
+        else if (course.lessons.length == 0) {
+            let image_path = path.join(process.env.ROOT, 'public', course.imageURL)
             let diff = (Math.random() + 1).toString(36).substring(7);
             fs.copyFileSync(
                 image_path, 
                 image_path + diff, 
                 fs.constants.COPYFILE_EXCL
             );
-            section = await prisma.section.update({
-                where: { id: section.id },
+            course = await prisma.course.update({
+                where: { id: course.id },
                 data: { 
-                    enableSubsections: false,
-                    subsections: {
+                    enableLessons: false,
+                    lessons: {
                         create: { 
-                            name: section.name,
+                            name: course.name,
                             number: 1,
-                            imageURL: section.imageURL + diff,
+                            imageURL: course.imageURL + diff,
                             slides: {
                                 create: { title: 'Slide 1', number: 1 }
                             }
@@ -193,40 +193,40 @@ async function checkSubsectionChange(req, res, section) {
         }
         else {
             res.status(412).send(
-                'Unable to disable subsections\n' +
-                'Can only disable subsections if there 0-1 subsections in a section'
+                'Unable to disable lessons\n' +
+                'Can only disable lessons if there 0-1 lessons in a course'
             );
         }
     }
-    return section;
+    return course;
 }
 
 router.put('/:id', upload_img, async (req, res) => {
     data = {}
-    if (req.body.section_name)
-        data.name = req.body.section_name;
+    if (req.body.course_name)
+        data.name = req.body.course_name;
     if (req.file) {
         data.imageURL = `/media/${req.file.filename}`;
         console.log(req.file)
     }
     
     try {
-        let section;
-        if (req.body.section_name || req.file.filename) {
-            section = await prisma.section.update({
+        let course;
+        if (req.body.course_name || req.file.filename) {
+            course = await prisma.course.update({
                 where: { id: +req.params.id },
                 data: data,
-                include: { subsections : true}
+                include: { lessons : true}
             });
         }
         else
-            section = await prisma.section.findUniqueOrThrow({
+            course = await prisma.course.findUniqueOrThrow({
                 where: { id: +req.params.id },
-                include: { subsections: true }
+                include: { lessons: true }
             });
-        section =  await checkSubsectionChange(req, res, section);
-        res.render('section/card', { 
-            section: section, 
+        course =  await checkLessonChange(req, res, course);
+        res.render('course/card', { 
+            course: course, 
             admin: req.user.admin,
             admin_view: req.user.admin_view
         });
@@ -253,14 +253,14 @@ router.put('/:id', upload_img, async (req, res) => {
 router.delete('/:id', async (req, res) => {
     res.set('Content-Type', 'text/plain')
     try {
-        const section = await prisma.section.delete({
+        const course = await prisma.course.delete({
             where: { id: +req.params.id }
         })
-        image_path = path.join(process.env.ROOT, 'public', section.imageURL)
+        image_path = path.join(process.env.ROOT, 'public', course.imageURL)
         fs.unlink(image_path, err => { 
             if (err) throw err
         })
-        res.status(200).send(`${section.name} deleted successfully.`)
+        res.status(200).send(`${course.name} deleted successfully.`)
     } 
     catch(e) {
         console.error(e)
@@ -282,7 +282,7 @@ router.post('/reorder', async (req, res) => {
     try {
         await prisma.$transaction(async (tx) => {
             for (const [index, id] of req.body.entries()) {
-                await tx.section.update({
+                await tx.course.update({
                     where: { id: +id },
                     data: { number: +index }
                 }) 

@@ -42,18 +42,18 @@ model Section {
   name              String       @unique
   number            Int
   imageURL          String
-  enableSubsections Boolean
-  subsections       Subsection[]
+  enableLessons Boolean
+  lessons       Lesson[]
   Reference         Reference[]
 }
 
-model Subsection {
+model Lesson {
   id        Int         @id @default(autoincrement())
   name      String      @unique
   number    Int
   imageURL  String
-  section   Section     @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  sectionId Int
+  course   Section     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId Int
   slides    Slide[]
   Reference Reference[]
 }
@@ -62,8 +62,8 @@ model Slide {
   id           Int         @id @default(autoincrement())
   number       Int
   title        String
-  subsection   Subsection  @relation(fields: [subsectionId], references: [id], onDelete: Cascade)
-  subsectionId Int
+  lesson   Lesson  @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  lessonId Int
   components   Component[]
 }
 
@@ -134,10 +134,10 @@ model OpenEndedQuestion {
 model Reference {
   component    Component   @relation(fields: [componentId], references: [id], onDelete: Cascade)
   componentId  Int         @id
-  section      Section     @relation(fields: [sectionId], references: [id])
-  sectionId    Int
-  subsection   Subsection? @relation(fields: [subsectionId], references: [id])
-  subsectionId Int?
+  course      Section     @relation(fields: [courseId], references: [id])
+  courseId    Int
+  lesson   Lesson? @relation(fields: [lessonId], references: [id])
+  lessonId Int?
   message      Json
 }
 

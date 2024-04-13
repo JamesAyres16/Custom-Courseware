@@ -25,7 +25,7 @@ router.post('/', isAdmin, async (req,  res) => {
     try {
         const slide = await prisma.$transaction(async (tx) => {
             const query_res = await tx.slide.aggregate({
-                where: { subsectionId: +req.body.subsectionId },
+                where: { lessonId: +req.body.lessonId },
                 _max: { number: true }
             })
             let number = query_res._max.number + 1;
@@ -35,21 +35,21 @@ router.post('/', isAdmin, async (req,  res) => {
                 data: {
                     title: req.body.title,
                     number: number,
-                    subsectionId: +req.body.subsectionId
+                    lessonId: +req.body.lessonId
                 }
             })
         })
         res.set('Content-Type', 'application/json')
         res.json({
             'slide': await app_render(
-                req.app, 'subsection/slide', { 
+                req.app, 'lesson/slide', { 
                     slide: slide,
                     admin: req.user.admin, 
                     admin_view: req.user.admin_view 
                 }
             ),
             'mock': await app_render(
-                req.app, 'subsection/slide_mock', { 
+                req.app, 'lesson/slide_mock', { 
                     slide: slide,
                     admin: req.user.admin, 
                     admin_view: req.user.admin_view 
@@ -64,7 +64,7 @@ router.post('/', isAdmin, async (req,  res) => {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code == 'P2002'
         )
-            res.status(400).send('Subsection Name Taken')
+            res.status(400).send('Lesson Name Taken')
         else
             res.status(500).send('Unknown Error Occurred')
     }
@@ -101,22 +101,22 @@ router.put('/:id', async (req, res) => {
         let data = {}
         const slide = await prisma.slide.findUnique({
             where: { id: +req.params.id },
-            include: { subsection: true }
+            include: { lesson: true }
         });
         if (req.body.title != slide.title) {
             msg += 'Slide name updated\n';
             data.title = req.body.title;
         }
-        if (+req.body.subsection != slide.subsectionId) {
-            const new_subsection = await prisma.subsection.findUnique({
-                where: { id: +req.body.subsection },
-                include: { section: true }
+        if (+req.body.lesson != slide.lessonId) {
+            const new_lesson = await prisma.lesson.findUnique({
+                where: { id: +req.body.lesson },
+                include: { course: true }
             });
             msg += (
-                `Slide moved from ${slide.subsection.name}` +
-                ` to ${new_subsection.section.name}/${new_subsection.name}`
+                `Slide moved from ${slide.lesson.name}` +
+                ` to ${new_lesson.course.name}/${new_lesson.name}`
             )
-            data.subsectionId = new_subsection.id;
+            data.lessonId = new_lesson.id;
             res.status(202)
         }
         if (msg.length > 0) {

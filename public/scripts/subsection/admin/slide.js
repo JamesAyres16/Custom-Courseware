@@ -54,7 +54,7 @@ function delete_slide(event) {
 
 
 function addSlide(title) {
-    const subsectionId = document.getElementById('subsection_container').dataset.subsectionId
+    const lessonId = document.getElementById('lesson_container').dataset.lessonId
     fetch(`/slides`, {
         method: 'POST',
         headers: {
@@ -62,7 +62,7 @@ function addSlide(title) {
             'X-Requested-With': 'XMLHttpRequest',
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({title: title, subsectionId: subsectionId})
+        body: JSON.stringify({title: title, lessonId: lessonId})
     }).then(async res => {
         if (!res.ok) {
             const hasMsg = (
@@ -106,12 +106,12 @@ document.getElementById('modifySlideModal').addEventListener('show.bs.modal', ev
     event.target.dataset.slideId = carousel_item.dataset.slideId;
     let slide_title = carousel_item.querySelector('.slide-title').innerText;
     document.getElementById('newSlideName').value = slide_title;
-    let section_dropdown = document.getElementById('section_id')
-    section_dropdown.value = section_dropdown.firstElementChild.value;
+    let course_dropdown = document.getElementById('course_id')
+    course_dropdown.value = course_dropdown.firstElementChild.value;
 })
 
-var section_mapping;
-fetch('/sections/json', {
+var course_mapping;
+fetch('/courses/json', {
     method: 'GET',
     headers: {
         'X-Requested-With': 'XMLHttpRequest',
@@ -124,25 +124,25 @@ fetch('/sections/json', {
         const msg = hasMsg ? await res.text() : 'Non-Ok Response';
         throw new Error(msg)
     }
-    section_mapping = (await res.json()).filter(
-        section => section.subsections.length
+    course_mapping = (await res.json()).filter(
+        course => course.lessons.length
     );
 }).catch(
     err => console.log(err)
 );
 
-document.getElementById("section_id").addEventListener('change', event => {
-    let section_dropdown = document.getElementById("section_id");
-    let section = section_mapping.find(
-        section => section.id == +section_dropdown.value
+document.getElementById("course_id").addEventListener('change', event => {
+    let course_dropdown = document.getElementById("course_id");
+    let course = course_mapping.find(
+        course => course.id == +course_dropdown.value
     )
-    let subsection_dropdown = document.getElementById("subsection_id");
-    subsection_dropdown.innerHTML = ''
-    section.subsections.forEach(subsection => {
+    let lesson_dropdown = document.getElementById("lesson_id");
+    lesson_dropdown.innerHTML = ''
+    course.lessons.forEach(lesson => {
         let option = document.createElement('option');
-        option.value = subsection.id;
-        option.innerText = subsection.name;
-        subsection_dropdown.appendChild(option)
+        option.value = lesson.id;
+        option.innerText = lesson.name;
+        lesson_dropdown.appendChild(option)
     })
 });
 
@@ -163,7 +163,7 @@ document.getElementById('modifySlide').addEventListener('click', event => {
         },
         body: JSON.stringify({ 
             title: newSlideName.value,
-            subsection: +document.getElementById('subsection_id').value
+            lesson: +document.getElementById('lesson_id').value
         })
     }).then(async res => {
         if (!res.ok) {

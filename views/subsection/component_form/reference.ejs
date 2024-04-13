@@ -1,16 +1,16 @@
 <% const uuid = Math.ceil(Math.random() * 2 ** 32)%>
 <div id="ref-container-<%= uuid %>">
     <div class="my-3">
-        <label class="form-label" for="ref-section-<%= uuid %>">
+        <label class="form-label" for="ref-course-<%= uuid %>">
             Assigned Section
         </label>
-        <select class="form-select" name="sectionId" id="ref-section-<%= uuid %>" required></select>
+        <select class="form-select" name="courseId" id="ref-course-<%= uuid %>" required></select>
     </div>  
     <div class="mb-3">
-        <label class="form-label" for="ref-subsection-<%= uuid %>">
-            Assigned Subsection
+        <label class="form-label" for="ref-lesson-<%= uuid %>">
+            Assigned Lesson
         </label>
-        <select class="form-select" name="subsectionId" id="ref-subsection-<%= uuid %>"></select> 
+        <select class="form-select" name="lessonId" id="ref-lesson-<%= uuid %>"></select> 
     </div>
 
     <div class="mb-3">
@@ -22,54 +22,54 @@
 
 <script type="module">
     ;(async () => {
-        let section_dropdown = document.getElementById("ref-section-<%= uuid %>");
-        let subsection_dropdown = document.getElementById("ref-subsection-<%= uuid %>");
+        let course_dropdown = document.getElementById("ref-course-<%= uuid %>");
+        let lesson_dropdown = document.getElementById("ref-lesson-<%= uuid %>");
         const sleep = ms => new Promise(r => setTimeout(r, ms));
-        while (typeof section_mapping == 'undefined' || !section_mapping) {
+        while (typeof course_mapping == 'undefined' || !course_mapping) {
             await sleep(500);
         }
 
-        section_dropdown.innerHTML = '';
-        for (let section of section_mapping) {
+        course_dropdown.innerHTML = '';
+        for (let course of course_mapping) {
             let option = document.createElement('option');
-            option.value = section.id;
-            option.innerText = section.name;
-            section_dropdown.appendChild(option);
+            option.value = course.id;
+            option.innerText = course.name;
+            course_dropdown.appendChild(option);
         }   
 
-        function setSubsections(section) {
-            subsection_dropdown.innerHTML = ''
-            // subsections not required so blank option is provided...
-            subsection_dropdown.appendChild(
+        function setLessons(course) {
+            lesson_dropdown.innerHTML = ''
+            // lessons not required so blank option is provided...
+            lesson_dropdown.appendChild(
                 document.createElement('option')
             );
-            section.subsections.forEach(subsection => {
-                console.log(subsection)
+            course.lessons.forEach(lesson => {
+                console.log(lesson)
                 let option = document.createElement('option');
-                option.value = subsection.id;
-                option.innerText = subsection.name;
-                subsection_dropdown.appendChild(option);
+                option.value = lesson.id;
+                option.innerText = lesson.name;
+                lesson_dropdown.appendChild(option);
             })
         }
 
-        section_dropdown.addEventListener('change', () => {
-            let section = section_mapping.find(
-                section => section.id == +section_dropdown.value
+        course_dropdown.addEventListener('change', () => {
+            let course = course_mapping.find(
+                course => course.id == +course_dropdown.value
             )
-            setSubsections(section)
+            setLessons(course)
         })
 
-        let section = section_mapping.find(
-            section => section.id == +section_dropdown.value
+        let course = course_mapping.find(
+            course => course.id == +course_dropdown.value
         )
-        setSubsections(section)
+        setLessons(course)
 
 
         // <% if (locals.component) { %>
-            section_dropdown.value = '<%= component.reference.sectionId %>'
+            course_dropdown.value = '<%= component.reference.courseId %>'
         // <% } %>
-        // <% if (locals.component?.reference?.subsectionId) { %>
-            subsection_dropdown.value = '<%= component.reference.subsectionId %>'
+        // <% if (locals.component?.reference?.lessonId) { %>
+            lesson_dropdown.value = '<%= component.reference.lessonId %>'
         // <% } %>
 
         let quill = new Quill('#ref-text-editor-<%= uuid %>', {

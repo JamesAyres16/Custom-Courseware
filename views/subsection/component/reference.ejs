@@ -9,10 +9,10 @@
         JSON.parse(String.raw`<%- component.reference.message %>`)
     );
 </script>
-<% if (component.reference.subsectionId) { %>
-    <a href="/subsections/<%= component.reference.subsectionId %>" class="position-absolute top-0 start-0 p-1">
+<% if (component.reference.lessonId) { %>
+    <a href="/lessons/<%= component.reference.lessonId %>" class="position-absolute top-0 start-0 p-1">
 <% } else { %>
-    <a href="/sections/<%= component.reference.sectionId %>" class="position-absolute top-0 start-0 p-1">
+    <a href="/courses/<%= component.reference.courseId %>" class="position-absolute top-0 start-0 p-1">
 <% } %>
     <i class="bi bi-box-arrow-up-right" ></i>
 </a>

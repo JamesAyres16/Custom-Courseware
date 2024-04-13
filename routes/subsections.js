@@ -24,7 +24,7 @@ const upload_img = multer({
         else
             cb(null, true);
     } 
-}).single('subsection_image');
+}).single('lesson_image');
 
 
 router.get('/:id', async (req, res, next) => {
@@ -33,7 +33,7 @@ router.get('/:id', async (req, res, next) => {
     for (const componentType of componentTypes)
         includes[componentType.variable] = true
     try {
-        const subsection = await prisma.subsection.findUniqueOrThrow({
+        const lesson = await prisma.lesson.findUniqueOrThrow({
             where: { id: +req.params.id },
             include: { 
                 slides: {
@@ -42,20 +42,20 @@ router.get('/:id', async (req, res, next) => {
                         orderBy: { number: 'asc' }, include: includes
                     } }
                 },
-                section: true
+                course: true
             },
         })
-        const sections = await prisma.section.findMany({
+        const courses = await prisma.course.findMany({
             include: { 
-                subsections: { orderBy: { number: 'asc' } },
+                lessons: { orderBy: { number: 'asc' } },
             },
             orderBy: { number: 'asc' }
         })
         res.render(
-            'subsection/subsection', { 
-                subsection: subsection, 
+            'lesson/lesson', { 
+                lesson: lesson, 
                 componentTypes: componentTypes,
-                sections: sections,
+                courses: courses,
                 admin: req.user.admin, 
                 admin_view: req.user.admin_view 
             }
@@ -75,30 +75,30 @@ router.use(isAdmin);
 
 router.post('/', upload_img, async (req, res) => {
     try {
-        const subsection = await prisma.$transaction(async (tx) => {
-            const query_res = await tx.subsection.aggregate({
+        const lesson = await prisma.$transaction(async (tx) => {
+            const query_res = await tx.lesson.aggregate({
                 _max: { number: true }
             })
             let number = query_res._max.number + 1;
             if (!number)
                 number = 0
-            const subsection = await tx.subsection.create({
+            const lesson = await tx.lesson.create({
                 data: {
-                    name: req.body.subsection_name,
+                    name: req.body.lesson_name,
                     number: number,
                     imageURL: `/media/${req.file.filename}`,
                     slides: {
                         create: { title: 'Slide 1', number: 1 }
                     },
-                    section: {
-                        connect: { id: +req.body.section_id }
+                    course: {
+                        connect: { id: +req.body.course_id }
                     }
                 }
             })
-            return subsection
+            return lesson
         })
-        res.render('subsection/card', { 
-            subsection: subsection, 
+        res.render('lesson/card', { 
+            lesson: lesson, 
             admin: req.user.admin,
             admin_view: req.user.admin_view 
         });
@@ -114,7 +114,7 @@ router.post('/', upload_img, async (req, res) => {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code == 'P2002'
         )
-            res.status(400).send('Subsection Name Taken')
+            res.status(400).send('Lesson Name Taken')
         else
             res.status(500).send('Unknown Error Occurred')
     }
@@ -123,48 +123,48 @@ router.post('/', upload_img, async (req, res) => {
 
 router.put('/:id', upload_img, async (req, res) => {
     data = {}
-    if (req.body.subsection_name)
-        data.name = req.body.subsection_name;
+    if (req.body.lesson_name)
+        data.name = req.body.lesson_name;
     if (req.file)
         data.imageURL = `/media/${req.file.filename}`;
     
     try {
-        let subsection;
-        if (req.body.subsection_name || req.file.filename)
-            subsection = await prisma.subsection.update({
+        let lesson;
+        if (req.body.lesson_name || req.file.filename)
+            lesson = await prisma.lesson.update({
                 where: { id: +req.params.id },
                 data: data
             });
         else
-            subsection = await prisma.subsection.findUniqueOrThrow({
+            lesson = await prisma.lesson.findUniqueOrThrow({
                 where: { id: +req.params.id }
             });
         
-        if (subsection.sectionId != +req.body.section_id) {
-            let section = await prisma.section.findUnique({
-                where: { id: +req.body.section_id  }
+        if (lesson.courseId != +req.body.course_id) {
+            let course = await prisma.course.findUnique({
+                where: { id: +req.body.course_id  }
             })
-            if (!section.enableSubsections) {
-                console.log(section)
+            if (!course.enableLessons) {
+                console.log(course)
                 res.status(400).send(
-                    'Subsections disabled for this section.'
+                    'Lessons disabled for this course.'
                 )
             }
             else {
-                await prisma.subsection.update({
-                    where: { id: subsection.id },
-                    data: { sectionId: section.id }
+                await prisma.lesson.update({
+                    where: { id: lesson.id },
+                    data: { courseId: course.id }
                 })
                 res.status(202).json({ 
-                    subsection_id: subsection.id,
-                    subsection_name: subsection.name,
-                    destination: section.name
+                    lesson_id: lesson.id,
+                    lesson_name: lesson.name,
+                    destination: course.name
                 })
             }
         }
         else {
-            res.render('subsection/card', { 
-                subsection: subsection, admin: req.user.admin,
+            res.render('lesson/card', { 
+                lesson: lesson, admin: req.user.admin,
                 admin_view: req.user.admin_view
             });
         }
@@ -181,7 +181,7 @@ router.put('/:id', upload_img, async (req, res) => {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code == 'P2002'
         )
-            res.status(400).send('Subsection Name Taken')
+            res.status(400).send('Lesson Name Taken')
         else
             res.status(500).send('Unknown Error Occurred')
     }
@@ -191,14 +191,14 @@ router.put('/:id', upload_img, async (req, res) => {
 router.delete('/:id', async (req, res) => {
     res.set('Content-Type', 'text/plain')
     try {
-        const subsection = await prisma.subsection.delete({
+        const lesson = await prisma.lesson.delete({
             where: { id: +req.params.id }
         })
-        image_path = path.join(process.env.ROOT, 'public', subsection.imageURL)
+        image_path = path.join(process.env.ROOT, 'public', lesson.imageURL)
         fs.unlink(image_path, err => { 
             if (err) throw err
         })
-        res.status(200).send(`${subsection.name} deleted successfully.`)
+        res.status(200).send(`${lesson.name} deleted successfully.`)
     } 
     catch(e) {
         console.error(e)
@@ -206,9 +206,9 @@ router.delete('/:id', async (req, res) => {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code == 'P2015'
         )
-            res.status(400).send('Subsection Not Found')
+            res.status(400).send('Lesson Not Found')
         else if (e.syscall === 'unlink')
-            res.status(400).send('Subsection Image Not Found')
+            res.status(400).send('Lesson Image Not Found')
         else
             res.status(500).send('Unknown Error Occurred')
     }
@@ -220,7 +220,7 @@ router.post('/reorder', async (req, res) => {
     try {
         await prisma.$transaction(async (tx) => {
             for (const [index, id] of req.body.entries()) {
-                await tx.subsection.update({
+                await tx.lesson.update({
                     where: { id: +id },
                     data: { number: +index }
                 }) 

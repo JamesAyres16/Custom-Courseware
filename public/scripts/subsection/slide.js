@@ -18,7 +18,7 @@ Array.from(document.getElementsByClassName("mock"))
         mock => mock.addEventListener('click', event => jumpToSlide(mock))
     );
 
-document.getElementById('subsection-edit-side-panel')
+document.getElementById('lesson-edit-side-panel')
         .addEventListener('show.bs.offcanvas', event => {
     Array.from(event.target.querySelectorAll('.mock > div:not(.bg-opacity-10)'))
          .forEach(el => { el.classList.add('bg-opacity-10'); el.style.color = 'black' } );

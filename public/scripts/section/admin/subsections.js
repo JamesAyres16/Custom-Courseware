@@ -1,17 +1,17 @@
 
-function delete_subsection_verification(event) {
-    const card = event.relatedTarget.closest('.subsection-course-card');
+function delete_lesson_verification(event) {
+    const card = event.relatedTarget.closest('.lesson-menu-card');
     const thing_to_be_deleted = document.getElementById('thing-to-be-deleted')
-    thing_to_be_deleted.innerText = card.getElementsByClassName('subsection-title')[0].innerText;
+    thing_to_be_deleted.innerText = card.getElementsByClassName('lesson-title')[0].innerText;
     thing_to_be_deleted.dataset.src_id = card.id
     document.getElementById('delete-verified')
             .dataset
-            .deleteVerifiedFunc = 'delete_subsection';
+            .deleteVerifiedFunc = 'delete_lesson';
 }
 
-function delete_subsection(event) {
+function delete_lesson(event) {
     const thing_to_be_deleted = document.getElementById('thing-to-be-deleted');
-    fetch(`/subsections/${thing_to_be_deleted.dataset.src_id}`, {
+    fetch(`/lessons/${thing_to_be_deleted.dataset.src_id}`, {
         method: 'DELETE',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -29,36 +29,36 @@ function delete_subsection(event) {
 }
 
 
-document.getElementById('subsection-modal')
+document.getElementById('lesson-modal')
         .addEventListener('show.bs.modal', event => {
-    document.getElementById('subsection-image').value = '';
-    const title = document.getElementById('subsection-modal-title');
-    const name_field = document.getElementById('subsection-name');
-    const submit = document.getElementById('submit-subsection');
+    document.getElementById('lesson-image').value = '';
+    const title = document.getElementById('lesson-modal-title');
+    const name_field = document.getElementById('lesson-name');
+    const submit = document.getElementById('submit-lesson');
     const method = event.relatedTarget.getAttribute('role');
     if (method == 'put') {
         title.innerText = 'Update Lesson';
-        const card = event.relatedTarget.closest('.subsection-course-card');
-        name_field.value = card.getElementsByClassName('subsection-title')[0].innerText;
-        document.getElementById('subsection-image').required = false;
+        const card = event.relatedTarget.closest('.lesson-menu-card');
+        name_field.value = card.getElementsByClassName('lesson-title')[0].innerText;
+        document.getElementById('lesson-image').required = false;
         submit.setAttribute('data-origin-id', card.id);
     }
     else {
         title.innerText = 'New Lesson';
         name_field.value = '';
-        document.getElementById('subsection-image').required = true;
+        document.getElementById('lesson-image').required = true;
         submit.setAttribute('data-origin-id', '');
     }
 });
 
-document.getElementById('subsection-form')
+document.getElementById('lesson-form')
         .addEventListener('submit', event => {
         event.preventDefault();
         const origin_id = event.submitter.getAttribute('data-origin-id');
-        const url = origin_id ? `/subsections/${origin_id}`: '/subsections/';
+        const url = origin_id ? `/lessons/${origin_id}`: '/lessons/';
         const method = origin_id ? `PUT`: 'POST';
         const form = new FormData(
-            document.getElementById('subsection-form')
+            document.getElementById('lesson-form')
         );
         fetch(url, {
             method: method,
@@ -76,9 +76,9 @@ document.getElementById('subsection-form')
             }
             else if (res.status == 202) {
                 const data = await res.json();
-                document.getElementById(`${data.subsection_id}`).remove();
+                document.getElementById(`${data.lesson_id}`).remove();
                 alert(
-                    `${data.subsection_name} has been moved to ${data.destination}`, 
+                    `${data.lesson_name} has been moved to ${data.destination}`, 
                     'success'
                 );
             }
@@ -91,31 +91,31 @@ document.getElementById('subsection-form')
                     alert('Lesson Successfully Updated','success');
                 }
                 else {
-                    const spacer = document.getElementById('no-subsection-avalible');
+                    const spacer = document.getElementById('no-lesson-avalible');
                     if (spacer)
                         spacer.remove();
-                    document.getElementById('subsection-column').appendChild(formatted_card);
+                    document.getElementById('lesson-column').appendChild(formatted_card);
                     alert('Lesson Successfully Created','success');
                 }
             }
         }).catch(
             err => alert(err, 'danger')
         );
-        document.getElementById('close-subsection-form').click()
+        document.getElementById('close-lesson-form').click()
     }
 );
 
 
 dragula(
-    [ document.getElementById('subsection-column') ]
+    [ document.getElementById('lesson-column') ]
 ).on('drop', async (el, target, src, sibling) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     const ordered_names = Array.from(
-        document.querySelectorAll('.subsection-course-card:not(.gu-transit)')
+        document.querySelectorAll('.lesson-menu-card:not(.gu-transit)')
     ).map(item => item.id)
     console.log(ordered_names)
 
-    fetch('/subsections/reorder', {
+    fetch('/lessons/reorder', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

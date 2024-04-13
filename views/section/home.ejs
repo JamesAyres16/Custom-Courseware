@@ -21,64 +21,64 @@
             type="button"
             class="btn btn-outline-primary btn-sm"
             data-bs-toggle="modal"
-            data-bs-target="#section-modal"
+            data-bs-target="#course-modal"
         >
             <i class="bi bi-plus"></i> Create Course 
         </button>
     </div>
     <div 
-        class="row g-4 py-5 section-container" 
-        id="section-column"
+        class="row g-4 py-5 course-container" 
+        id="course-column"
     >
-        <% sections.forEach(section => { %>
-            <%- include('card', { section: section }) %>
+        <% courses.forEach(course => { %>
+            <%- include('card', { course: course }) %>
         <%}) %>
     </div>
     <style>
-        #section-column:last-child {
+        #course-column:last-child {
             width: 100% !important;
         }
     </style>
 </div>
 
-<form enctype='multipart/form-data' method='post' id="section-form">
+<form enctype='multipart/form-data' method='post' id="course-form">
     <div 
         class="modal fade" 
-        id="section-modal" 
+        id="course-modal" 
         tabindex="-1"  
     >
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="section-modal-title">New Section</h5>
+                    <h5 class="modal-title" id="course-modal-title">New Section</h5>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="section-name" class="form-label">Name</label>
+                        <label for="course-name" class="form-label">Name</label>
                         <input 
                             type="text" 
                             class="form-control" 
-                            id="section-name" 
-                            name="section_name" 
+                            id="course-name" 
+                            name="course_name" 
                             required
                         >
                     </div>
                                         
                     <div class="mb-3">
-                        <label class="form-label" for="section-image">
+                        <label class="form-label" for="course-image">
                             Upload Background Image
                         </label>
                         <input 
                             type="file" 
                             class="form-control" 
-                            id="section-image" 
-                            name="section_image" 
+                            id="course-image" 
+                            name="course_image" 
                             accept="image/png, image/jpeg" 
                             required
                         >
                         <div class="form-text">
                             <small>
-                                Upload Image for section card. 
+                                Upload Image for course card. 
                                 Free Photos can be found on sites like unsplash.
                                 You can also upload your own photos.
                             </small>
@@ -86,11 +86,11 @@
                     </div>  
                     <div class="mb-3">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="true" name="enable_subsections" id="enable_subsections" checked>
-                            <label class="form-check-label" for="enable_subsections">Enable Subsections</label>
+                            <input class="form-check-input" type="checkbox" value="true" name="enable_lessons" id="enable_lessons" checked>
+                            <label class="form-check-label" for="enable_lessons">Enable Lessons</label>
                         </div>
                         <div class="form-text">
-                            <small>Check this box if you would like a section course with mutiple slide decks.</small>
+                            <small>Check this box if you would like a course course with mutiple slide decks.</small>
                         </div>
                     </div>       
                 </div>
@@ -99,14 +99,14 @@
                         type="button" 
                         class="btn btn-secondary" 
                         data-bs-dismiss="modal" 
-                        id="close-section-form"
+                        id="close-course-form"
                     >
                         Close
                     </button>
                     <button 
                         type="submit" 
                         class="btn btn-primary" 
-                        id="submit-section"
+                        id="submit-course"
                     >
                         Save
                     </button>
@@ -115,6 +115,6 @@
         </div>
     </div>
 </form>
-<script src="/scripts/section/admin/course.js" defer></script>
+<script src="/scripts/course/admin/course.js" defer></script>
 
 <%- include('../partials/footer') %>

@@ -5,84 +5,84 @@
     <% var classStr = "pb-2 border-bottom" %>
     <% if (locals.admin_view) classStr += " d-flex justify-content-between align-items-center" %>
     <div class="<%= classStr %>">
-        <h1 class=""><%= section.name %></h1>
+        <h1 class=""><%= course.name %></h1>
         <% if (locals.admin_view) { %>
             <button 
                 type="button" 
                 class="btn btn-lg btn-primary"
                 data-bs-toggle="modal"
-                data-bs-target="#subsection-modal"
+                data-bs-target="#lesson-modal"
             >
                 <i class="bi bi-plus"></i> Add Element
             </button> 
         <% } %>
     </div>
     <div 
-        id="subsection-column" 
+        id="lesson-column" 
         class="row row-cols-1 row-cols-md-2 align-items-stretch g-4 py-5"
     >
-        <% section.subsections.forEach(subsection => { %>
-            <%- include('../subsection/card', {subsection: subsection})%>
+        <% course.lessons.forEach(lesson => { %>
+            <%- include('../lesson/card', {lesson: lesson})%>
         <% }) %>
-        <% if (!section.subsections.length) { %>
-            <div class="col" id="no-subsection-avalible">
-                <h3>No subsections avalible.</h3>
+        <% if (!course.lessons.length) { %>
+            <div class="col" id="no-lesson-avalible">
+                <h3>No lessons avalible.</h3>
             </div>
         <% } %>
     </div>
 </div>
 
 <% if (locals.admin_view) { %>
-    <form enctype='multipart/form-data' method='post' id="subsection-form">
+    <form enctype='multipart/form-data' method='post' id="lesson-form">
     <div 
         class="modal fade" 
-        id="subsection-modal" 
+        id="lesson-modal" 
         tabindex="-1"  
     >
         <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="subsection-modal-title">New Subsection</h5>
+            <h5 class="modal-title" id="lesson-modal-title">New Lesson</h5>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="subsection-name" class="form-label">Name</label>
+                    <label for="lesson-name" class="form-label">Name</label>
                     <input 
                         type="text" 
                         class="form-control" 
-                        id="subsection-name" 
-                        name="subsection_name" 
+                        id="lesson-name" 
+                        name="lesson_name" 
                         required
                     >
                 </div>
                                     
                 <div class="mb-3">
-                    <label class="form-label" for="subsection-image">
+                    <label class="form-label" for="lesson-image">
                         Upload Background Image
                     </label>
                     <input 
                         type="file" 
                         class="form-control" 
-                        id="subsection-image" 
-                        name="subsection_image" 
+                        id="lesson-image" 
+                        name="lesson_image" 
                         accept="image/png, image/jpeg" 
                         required
                     >
                     <div class="form-text">
                         <small>
-                            Upload Image for subsection card. 
+                            Upload Image for lesson card. 
                             Free Photos can be found on sites like unsplash.
                         </small>
                     </div>
                 </div> 
                 <div class="mb-3">
-                    <label class="form-label" for="section_id">
+                    <label class="form-label" for="course_id">
                         Assigned Section
                     </label>
-                    <select class="form-select" name="section_id" id="section_id">
-                        <option value="<%= section.id %>" selected><%= section.name %></option>
-                        <% sections.forEach(other_section => { %>
-                            <option value="<%= other_section.id %>"><%= other_section.name %></option>
+                    <select class="form-select" name="course_id" id="course_id">
+                        <option value="<%= course.id %>" selected><%= course.name %></option>
+                        <% courses.forEach(other_course => { %>
+                            <option value="<%= other_course.id %>"><%= other_course.name %></option>
                         <% }); %>
                     </select>
                 </div> 
@@ -92,14 +92,14 @@
                 type="button" 
                 class="btn btn-secondary" 
                 data-bs-dismiss="modal" 
-                id="close-subsection-form"
+                id="close-lesson-form"
             >
                 Close
             </button>
             <button 
                 type="submit" 
                 class="btn btn-primary" 
-                id="submit-subsection"
+                id="submit-lesson"
             >
                 Save
             </button>
@@ -111,6 +111,6 @@
 <% } %>
 
 <% if (locals.admin_view) { %>
-    <script src="/scripts/section/admin/subsections.js" defer></script>
+    <script src="/scripts/course/admin/lessons.js" defer></script>
 <% } %>
 <%- include('../partials/footer') %>

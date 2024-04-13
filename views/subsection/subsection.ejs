@@ -1,20 +1,20 @@
 <%- include('../partials/header') %>
 <%- include('../partials/nav') %>
 
-<div id="subsection_container" class="mb-5" data-subsection-id="<%= subsection.id %>">
+<div id="lesson_container" class="mb-5" data-lesson-id="<%= lesson.id %>">
   <div class="position-absolute mx-5 px-5" style="z-index: 5;">
-    <% if (subsection.section.enableSubsections) { %>
-      <a href="/sections/<%= subsection.section.id %>">
-        <%= subsection.section.name %>
+    <% if (lesson.course.enableLessons) { %>
+      <a href="/courses/<%= lesson.course.id %>">
+        <%= lesson.course.name %>
       </a>
-      /<%= subsection.name %>
+      /<%= lesson.name %>
     <% } else { %>
-      <%= subsection.section.name %>
+      <%= lesson.course.name %>
     <% } %>
   </div>
   <div id="carouselControls" class="carousel slide w-100" data-bs-interval="-1">
       <div class="carousel-inner" id="slide-container">
-        <% subsection.slides.forEach(slide => { %>
+        <% lesson.slides.forEach(slide => { %>
           <%- include('slide', { slide: slide }) %>
         <% }) %>
       </div>
@@ -54,32 +54,32 @@
             <input type="text" class="form-control" id="newSlideName" name="newSlideName"> 
           </div>
           <div class="mb-3">
-            <label class="form-label" for="section_id">
+            <label class="form-label" for="course_id">
                 Assigned Section
             </label>
-            <select class="form-select" name="section_id" id="section_id">
-                <option value="<%= subsection.section.id %>" selected>
-                  <%= subsection.section.name %>
+            <select class="form-select" name="course_id" id="course_id">
+                <option value="<%= lesson.course.id %>" selected>
+                  <%= lesson.course.name %>
                 </option>
-                <% sections.forEach(section => { %>
-                    <% if (subsection.section.id != section.id && section.subsections.length) { %>
-                      <option value="<%= section.id %>">
-                        <%= section.name %>
+                <% courses.forEach(course => { %>
+                    <% if (lesson.course.id != course.id && course.lessons.length) { %>
+                      <option value="<%= course.id %>">
+                        <%= course.name %>
                       </option>
                     <% } %>
                 <% }); %>
             </select>
           </div>  
           <div class="mb-3">
-            <label class="form-label" for="section_id">
-                Assigned Subsection
+            <label class="form-label" for="course_id">
+                Assigned Lesson
             </label>
-            <select class="form-select" name="subsection_id" id="subsection_id">
-                <option value="<%= subsection.id %>" selected><%= subsection.name %></option>
-                <% var parent_section = sections.find(section => section.id == subsection.section.id) %>
-                <% parent_section.subsections.forEach(s_subsection => { %>
-                    <% if (s_subsection.id != subsection.id) { %>
-                      <option value="<%= s_subsection.id %>"><%= s_subsection.name %></option>
+            <select class="form-select" name="lesson_id" id="lesson_id">
+                <option value="<%= lesson.id %>" selected><%= lesson.name %></option>
+                <% var parent_course = courses.find(course => course.id == lesson.course.id) %>
+                <% parent_course.lessons.forEach(s_lesson => { %>
+                    <% if (s_lesson.id != lesson.id) { %>
+                      <option value="<%= s_lesson.id %>"><%= s_lesson.name %></option>
                     <% } %>
                 <% }); %>
             </select> 
@@ -149,14 +149,14 @@
   class="btn btn-primary position-fixed bottom-0 start-50 mb-4 translate-middle-x"
   style="z-index: 10;"
   data-bs-toggle="offcanvas"
-  data-bs-target="#subsection-edit-side-panel"
+  data-bs-target="#lesson-edit-side-panel"
 >
   Slides
 </div>
 
-<div class="offcanvas offcanvas-bottom vh-100" tabindex="-1" id="subsection-edit-side-panel">
+<div class="offcanvas offcanvas-bottom vh-100" tabindex="-1" id="lesson-edit-side-panel">
   <div class="offcanvas-header justify-content-center">
-    <h4 class="offcanvas-title m-2 fs-1" id="subsection-edit-side-panel-label">
+    <h4 class="offcanvas-title m-2 fs-1" id="lesson-edit-side-panel-label">
       Slides
     </h4>
     <button id="close-slide-offcanvas" type="button" class="btn-close  position-absolute top-0 end-0 p-5" data-bs-dismiss="offcanvas"></button>
@@ -183,18 +183,18 @@
       id="panel-slide-container" 
       class="row row-cols-1 row-cols-md-2 row-cols-lg-3 align-items-stretch g-4 p-5"
     >
-      <% subsection.slides.forEach(slide => { %>
+      <% lesson.slides.forEach(slide => { %>
         <%- include('slide_mock', { slide: slide }) %>
       <% }) %>
     </div>
   </div>
 </div>
 
-<script src="/scripts/subsection/slide.js" defer></script>
+<script src="/scripts/lesson/slide.js" defer></script>
 <% if (locals.admin_view) { %> 
-  <script src="/scripts/subsection/admin/component.js" defer></script>
-  <script src="/scripts/subsection/admin/slide.js" defer></script>
-  <script src="/scripts/subsection/admin/dragAndDrop.js" defer></script>
-  <script src="/scripts/subsection/admin/multipleChoiceQuestion.js" defer></script>
+  <script src="/scripts/lesson/admin/component.js" defer></script>
+  <script src="/scripts/lesson/admin/slide.js" defer></script>
+  <script src="/scripts/lesson/admin/dragAndDrop.js" defer></script>
+  <script src="/scripts/lesson/admin/multipleChoiceQuestion.js" defer></script>
 <% } %>
 <%- include('../partials/footer') %>

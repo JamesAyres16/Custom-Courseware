@@ -1,17 +1,17 @@
 
-function delete_section_verification(event) {
-    const card = event.relatedTarget.closest('.section-course-card');
+function delete_course_verification(event) {
+    const card = event.relatedTarget.closest('.course-menu-card');
     const thing_to_be_deleted = document.getElementById('thing-to-be-deleted')
-    thing_to_be_deleted.innerText = card.getElementsByClassName('section-title')[0].innerText;
+    thing_to_be_deleted.innerText = card.getElementsByClassName('course-title')[0].innerText;
     thing_to_be_deleted.dataset.src_id = card.id
     document.getElementById('delete-verified')
             .dataset
-            .deleteVerifiedFunc = 'delete_section';
+            .deleteVerifiedFunc = 'delete_course';
 }
 
-function delete_section(event) {
+function delete_course(event) {
     const thing_to_be_deleted = document.getElementById('thing-to-be-deleted');
-    fetch(`/sections/${thing_to_be_deleted.dataset.src_id}`, {
+    fetch(`/courses/${thing_to_be_deleted.dataset.src_id}`, {
         method: 'DELETE',
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
@@ -29,40 +29,40 @@ function delete_section(event) {
 }
 
 
-document.getElementById('section-modal')
+document.getElementById('course-modal')
         .addEventListener('show.bs.modal', event => {
-    document.getElementById('section-image').value = '';
-    const title = document.getElementById('section-modal-title');
-    const name_field = document.getElementById('section-name');
-    const submit = document.getElementById('submit-section');
+    document.getElementById('course-image').value = '';
+    const title = document.getElementById('course-modal-title');
+    const name_field = document.getElementById('course-name');
+    const submit = document.getElementById('submit-course');
     const method = event.relatedTarget.getAttribute('role');
-    const subsectionsCheckbox = document.getElementById('enable_subsections')
+    const lessonsCheckbox = document.getElementById('enable_lessons')
     if (method == 'put') {
         title.innerText = 'Update Section';
-        const card = event.relatedTarget.closest('.section-course-card');
-        name_field.value = card.getElementsByClassName('section-title')[0].innerText;
-        document.getElementById('section-image').required = false;
+        const card = event.relatedTarget.closest('.course-menu-card');
+        name_field.value = card.getElementsByClassName('course-title')[0].innerText;
+        document.getElementById('course-image').required = false;
         submit.setAttribute('data-origin-id', card.id);
-        subsectionsCheckbox.checked = card.dataset.enableSubsections == 'true';
+        lessonsCheckbox.checked = card.dataset.enableLessons == 'true';
     }
     else {
         title.innerText = 'New Section';
         name_field.value = '';
-        document.getElementById('section-image').required = true;
+        document.getElementById('course-image').required = true;
         submit.setAttribute('data-origin-id', '');
-        subsectionsCheckbox.checked = true;
+        lessonsCheckbox.checked = true;
     }
 });
 
 
-document.getElementById('section-form')
+document.getElementById('course-form')
         .addEventListener('submit', event => {
         event.preventDefault();
         const origin_id = event.submitter.getAttribute('data-origin-id');
-        const url = origin_id ? `/sections/${origin_id}`: '/sections/';
+        const url = origin_id ? `/courses/${origin_id}`: '/courses/';
         const method = origin_id ? `PUT`: 'POST';
         const form = new FormData(
-            document.getElementById('section-form')
+            document.getElementById('course-form')
         );
         fetch(url, {
             method: method,
@@ -80,9 +80,9 @@ document.getElementById('section-form')
             }
             if (res.status == 412) {
                 alert(
-                    'Unable to disable subsections.\n' +
-                    'Can only disable subsections if there 0-1 subsections in a section\n' +
-                    'Please delete or move extra subsections',
+                    'Unable to disable lessons.\n' +
+                    'Can only disable lessons if there 0-1 lessons in a course\n' +
+                    'Please delete or move extra lessons',
                     'danger'
                 )
             }
@@ -94,29 +94,29 @@ document.getElementById('section-form')
                 alert('Section Successfully Updated','success');
             }
             else {
-                const spacer = document.getElementById('no-section-avalible');
+                const spacer = document.getElementById('no-course-avalible');
                 if (spacer)
                     spacer.remove();
-                document.getElementById('section-column').appendChild(formatted_card);
+                document.getElementById('course-column').appendChild(formatted_card);
                 alert('Section Successfully Created','success');
             }
         }).catch(
             err => alert(err, 'danger')
         );
-        document.getElementById('close-section-form').click()
+        document.getElementById('close-course-form').click()
     }
 );
 
 
 dragula(
-    [ document.getElementById('section-column') ]
+    [ document.getElementById('course-column') ]
 ).on('drop', async (el, target, src, sibling) => {
     await new Promise(resolve => setTimeout(resolve, 500));
     const ordered_names = Array.from(
-        document.querySelectorAll('.section-course-card:not(.gu-transit)')
+        document.querySelectorAll('.course-menu-card:not(.gu-transit)')
     ).map(item => item.id)
 
-    fetch('/sections/reorder', {
+    fetch('/courses/reorder', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',

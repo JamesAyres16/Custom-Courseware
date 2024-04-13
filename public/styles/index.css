@@ -1,9 +1,9 @@
-.course-card {
+.menu-card {
     background-size: cover; 
     background-position: center;
 }
 
-.course-card:hover {
+.menu-card:hover {
     background-color: grey;
     background-blend-mode: multiply;
 }
@@ -35,10 +35,10 @@
     box-shadow: none;
 }
 
-.section-course-card:last-child:nth-of-type(odd):not(.gu-mirror) {
+.course-menu-card:last-child:nth-of-type(odd):not(.gu-mirror) {
     width: 100% !important;
 }
-.subsection-course-card:last-child:nth-of-type(odd):not(.gu-mirror) {
+.lesson-menu-card:last-child:nth-of-type(odd):not(.gu-mirror) {
     width: 100% !important;
 }
 

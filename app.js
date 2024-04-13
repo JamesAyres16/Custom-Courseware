@@ -36,13 +36,13 @@ app.use('/', auth.router)
 app.use(auth.isAuthenticated)
 app.use(auth.isActive)
 app.use('/glossary',    require(path.join(__dirname, 'routes/glossary')))
-app.use('/sections',    require(path.join(__dirname, 'routes/sections')))
-app.use('/subsections', require(path.join(__dirname, 'routes/subsections')))
+app.use('/courses',    require(path.join(__dirname, 'routes/courses')))
+app.use('/lessons', require(path.join(__dirname, 'routes/lessons')))
 app.use('/slides',      require(path.join(__dirname, 'routes/slides')))
 app.use('/components',  require(path.join(__dirname, 'routes/components')))
 
 app.get('/', (req, res) => {
-    res.redirect('/sections');
+    res.redirect('/courses');
 });
 
 app.use((req, res, next) => {

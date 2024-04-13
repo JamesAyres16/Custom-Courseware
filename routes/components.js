@@ -164,11 +164,11 @@ function getFieldDict(req) {
             break; 
         case 5:
             var input = { 
-                sectionId: +req.body.sectionId,
+                courseId: +req.body.courseId,
                 message: req.body.message
             };
-            if (req.body.subsectionId) {
-                input.subsectionId = +req.body.subsectionId;
+            if (req.body.lessonId) {
+                input.lessonId = +req.body.lessonId;
             }
             if (req.method == 'POST')
                 data.reference = { create: input };
@@ -227,7 +227,7 @@ router.post('/', upload_control, async (req, res) => {
             createObj.data.number = number;
             return await tx.component.create(createObj);
         })
-        res.render(`subsection/component/base`, { 
+        res.render(`lesson/component/base`, { 
             component: component, admin: req.user.admin, 
             admin_view: req.user.admin_view 
         });
@@ -251,7 +251,7 @@ router.put('/:id', upload_control, async (req, res) => {
             include: getQueryIncludes()
         })
         res.render(
-            `subsection/component/base`, { 
+            `lesson/component/base`, { 
                 component: component, admin: req.user.admin, 
                 admin_view: req.user.admin_view  
             }
@@ -283,7 +283,7 @@ router.get('/form/:id', async (req, res) => {
             include: getQueryIncludes()
         })
         res.render(
-            `subsection/component_form/base`,
+            `lesson/component_form/base`,
             { component: component }
         );
     }

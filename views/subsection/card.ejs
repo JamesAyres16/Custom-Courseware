@@ -1,8 +1,8 @@
 
-<div class="col subsection-course-card" id="<%=subsection.id%>">
+<div class="col lesson-menu-card" id="<%=lesson.id%>">
     <div 
-        class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg course-card mb-3" 
-        style="background-image: url('<%=subsection.imageURL%>');"
+        class="card card-cover h-100 overflow-hidden text-bg-dark rounded-4 shadow-lg menu-card mb-3" 
+        style="background-image: url('<%=lesson.imageURL%>');"
     >
         <% if (locals.admin_view) { %>
             <div class="d-grid gap-2 d-md-flex justify-content-md-end m-3">
@@ -10,7 +10,7 @@
                     class="btn btn-success me-md-2" 
                     type="button"
                     data-bs-toggle="modal" 
-                    data-bs-target="#subsection-modal"
+                    data-bs-target="#lesson-modal"
                     role="put"
                 >
                     Edit
@@ -20,7 +20,7 @@
                     type="button"
                     data-bs-toggle="modal" 
                     data-bs-target="#verify-delete-modal"
-                    data-show-delete-func="delete_subsection_verification"
+                    data-show-delete-func="delete_lesson_verification"
                 >
                     Delete
                 </button>
@@ -28,10 +28,10 @@
         <% } %>
         <div 
             class="d-flex flex-column h-100 p-5 pb-4 text-white text-shadow-1" 
-            onclick="location.href='/subsections/<%=subsection.id%>'"
+            onclick="location.href='/lessons/<%=lesson.id%>'"
         >
-            <h3 class="pt-5 mt-4 mb-4 display-6 lh-1 fw-bold text-capitalize subsection-title">
-                <%=subsection.name%>
+            <h3 class="pt-5 mt-4 mb-4 display-6 lh-1 fw-bold text-capitalize lesson-title">
+                <%=lesson.name%>
             </h3>
         </div>
     </div>
