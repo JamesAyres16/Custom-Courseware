@@ -1,4 +1,3 @@
-const e = require('express');
 const express = require('express'),
       multer = require('multer'),
       { Prisma, PrismaClient } = require('@prisma/client');
@@ -32,7 +31,7 @@ const upload_img = multer({
 router.get('/', async (req, res) => {
     msg = req.session.msg;
     req.session.msg = '';
-    res.render('course/home', {
+    res.render('home', {
         courses: await prisma.course.findMany({
             orderBy: { number: 'asc' }
         }),

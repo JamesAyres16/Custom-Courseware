@@ -7,7 +7,7 @@ const mg = mailgun.client({username: 'api', key: process.env.MAILGUN_KEY});
 
 async function sendMail(subject, body, contentType, emailAddress) {
     options = {
-        from: "Excited User <mailgun@sandbox-123.mailgun.org>",
+        from: "Custom Courseware <mailbot@custom-courseware.org>",
         to: [ emailAddress ],
         subject: subject
     }

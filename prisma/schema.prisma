@@ -42,8 +42,8 @@ model Course {
   name              String       @unique
   number            Int
   imageURL          String
-  enableLessons Boolean
-  lessons       Lesson[]
+  enableLessons     Boolean
+  lessons           Lesson[]
   Reference         Reference[]
 }
 
@@ -52,7 +52,7 @@ model Lesson {
   name      String      @unique
   number    Int
   imageURL  String
-  course   Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId Int
   slides    Slide[]
   Reference Reference[]
