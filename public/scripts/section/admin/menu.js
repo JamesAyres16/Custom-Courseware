@@ -38,7 +38,7 @@ document.getElementById('course-modal')
     const method = event.relatedTarget.getAttribute('role');
     const lessonsCheckbox = document.getElementById('enable_lessons')
     if (method == 'put') {
-        title.innerText = 'Update Section';
+        title.innerText = 'Update Course';
         const card = event.relatedTarget.closest('.course-menu-card');
         name_field.value = card.getElementsByClassName('course-title')[0].innerText;
         document.getElementById('course-image').required = false;
@@ -46,7 +46,7 @@ document.getElementById('course-modal')
         lessonsCheckbox.checked = card.dataset.enableLessons == 'true';
     }
     else {
-        title.innerText = 'New Section';
+        title.innerText = 'New Course';
         name_field.value = '';
         document.getElementById('course-image').required = true;
         submit.setAttribute('data-origin-id', '');
@@ -91,14 +91,14 @@ document.getElementById('course-form')
             const formatted_card = htmlRes.body.firstElementChild;
             if (origin_id) {
                 document.getElementById(origin_id).replaceWith(formatted_card);
-                alert('Section Successfully Updated','success');
+                alert('Course Successfully Updated','success');
             }
             else {
                 const spacer = document.getElementById('no-course-avalible');
                 if (spacer)
                     spacer.remove();
                 document.getElementById('course-column').appendChild(formatted_card);
-                alert('Section Successfully Created','success');
+                alert('Course Successfully Created','success');
             }
         }).catch(
             err => alert(err, 'danger')
@@ -132,7 +132,7 @@ dragula(
             const msg = hasMsg ? await res.text() : 'Non-Ok Response';
             throw new Error(msg)
         }
-        alert('Sections Reordered Successfully','success');
+        alert('Courses Reordered Successfully','success');
     }).catch(
         err => alert(err, 'danger')
     )

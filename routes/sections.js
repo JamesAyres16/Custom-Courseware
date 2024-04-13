@@ -145,7 +145,7 @@ router.post('/', upload_img, async (req, res) => {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code == 'P2002'
         )
-            res.status(400).send('Section Name Taken')
+            res.status(400).send('Course Name Taken')
         else
             res.status(500).send('Unknown Error Occurred')
     }
@@ -243,7 +243,7 @@ router.put('/:id', upload_img, async (req, res) => {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code == 'P2002'
         )
-            res.status(400).send('Section Name Taken')
+            res.status(400).send('Course Name Taken')
         else
             res.status(500).send('Unknown Error Occurred')
     }
@@ -268,9 +268,9 @@ router.delete('/:id', async (req, res) => {
             e instanceof Prisma.PrismaClientKnownRequestError &&
             e.code == 'P2015'
         )
-            res.status(400).send('Section Not Found')
+            res.status(400).send('Course Not Found')
         else if (e.syscall === 'unlink')
-            res.status(400).send('Section Image Not Found')
+            res.status(400).send('Course Image Not Found')
         else
             res.status(500).send('Unknown Error Occurred')
     }

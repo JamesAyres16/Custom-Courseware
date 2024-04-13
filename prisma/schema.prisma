@@ -37,7 +37,7 @@ model Term {
   definition String
 }
 
-model Section {
+model Course {
   id                Int          @id @default(autoincrement())
   name              String       @unique
   number            Int
@@ -52,7 +52,7 @@ model Lesson {
   name      String      @unique
   number    Int
   imageURL  String
-  course   Section     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId Int
   slides    Slide[]
   Reference Reference[]
@@ -134,7 +134,7 @@ model OpenEndedQuestion {
 model Reference {
   component    Component   @relation(fields: [componentId], references: [id], onDelete: Cascade)
   componentId  Int         @id
-  course      Section     @relation(fields: [courseId], references: [id])
+  course      Course     @relation(fields: [courseId], references: [id])
   courseId    Int
   lesson   Lesson? @relation(fields: [lessonId], references: [id])
   lessonId Int?
